@@ -1,0 +1,28 @@
+wget  -P /opt/  https://artifacts.elastic.co/downloads/kibana/kibana-5.6.3-linux-x86_64.tar.gz
+
+tar xzvf /opt/kibana-5.6.3-linux-x86_64.tar.gz    -C /opt/
+
+
+echo 'server.host: "172.16.99.2"'  >>  /opt/kibana-5.6.3-linux-x86_64/config/kibana.yml
+
+/opt/kibana-5.6.3-linux-x86_64/bin/kibana
+
+第一
+配置
+ kinaba 连接 elasticsearch  url 地址
+
+
+kibana.yml
+
+server.host/server.port 
+elasticsearch.url 
+
+kibaba   常用功能
+
+Discover 数据搜索查看
+Visualize 图表制作
+Dashboard 仪表盘制作
+Timelion  时序数据得高级可视化分析
+DevTools 开发者工具
+Management 配置管理
+

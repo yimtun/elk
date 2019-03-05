@@ -1,0 +1,155 @@
+Elasticsearch 常用术语
+
+Document 文档数据  存在elasticsearch 中得一条数据
+Index   索引  相当于 mysql 中的 一个库 所有得doc 都是存在一个具体得 index 中
+Type    索引 index 中的数据类型  相当于 mysql 中的 table
+Filed  字段  doc 的属性  比如一个用户的doc  它会有姓名的属性  年龄的属性
+Query DLS  查询语法
+
+elasticsearch CRUD
+
+Create 创建文档
+Read 读入文档
+Update 更新文档
+Delete 删除文档
+
+Elasticsearch Create  POST
+
+accounts 是一个 Index
+person  是一个Type
+1       是一个  在 account  Index 下的 person  Type  创建一个ID 为1  的 文档 document
+
+POST /accounts/person/1
+{
+"name":"john",
+"lastname":"Doe",
+"job_description":"Systems administrator and Linux specialit"
+}
+
+
+Kibana  Devtools
+
+
+运行
+
+{
+  "_index": "accounts",
+  "_type": "person",
+  "_id": "1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 2,
+    "failed": 0
+  },
+  "created": true
+}
+
+
+
+
+
+Elasticsearch Read
+
+Get /accounts/person/1
+
+
+
+Elasticsearch Update
+
+POST /accounts/person/1/_update
+{
+  "doc":{
+  "job_description":"Systems administrator and Linux specialist"
+}
+}
+
+
+
+
+Elasticsearch Delete
+
+使用id 删除指定的 document
+DELETE /accounts/person/1
+
+删除整个 index  
+DELETE /accounts
+
+
+
+Elasticsearch Query
+
+
+POST /accounts/person/1
+{
+"name":"john",
+"lastname":"Doe",
+"job_description":"Systems administrator and Linux specialit"
+}
+
+
+POST /accounts/person/2
+{
+"name":"alfred",
+"lastname":"way",
+"job_description":"Systems administrator and Linux specialit"
+}
+
+
+
+
+Query String
+
+GET /accounts/person/_search?q=john
+GET /accounts/person/_search?q=alfred
+
+Query DSL   对外提供的 以json  形式的查询语言 比 Query String 更加强大
+
+GET /accounts/person/_search
+{
+"query":{
+    "match":{
+       "name":"john"
+     }
+   }
+}
+
+
+
+
+GET /accounts/person/_search
+{
+"query":{
+    "match":{
+       "name":"alfred"
+     }
+   }
+}
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

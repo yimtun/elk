@@ -1,0 +1,67 @@
+https://www.elastic.co/
+
+
+https://www.elastic.co/downloads/past-releases
+
+
+wget -P /opt/   https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.3.tar.gz
+wget  -P /opt  https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.3.rpm
+
+
+rpm -ivh /opt/elasticsearch-5.6.3.rpm 
+rpm -ql elasticsearch-5.6.3-1.noarch 
+
+systemctl  start  elasticsearch
+
+tail -f /var/log/elasticsearch/elasticsearch.log
+
+netstat  -tnlp  | grep 9200
+
+curl  http://127.0.0.1:9200
+
+
+ls /etc/elasticsearch/
+elasticsearch.yml  jvm.options  log4j2.properties  scripts
+
+
+elasticsearch.yml
+
+cluster.name  集群名称 以此作为是否在同意集群得判断条件
+node.name     节点名称 以此作为集群中不同节点得区分条件
+network.host/http.port  网络地址和端口 用于http 和transport 服务使用
+path.data 数据存储地址
+path.log  日志存储地址
+
+
+network.host: 172.16.99.1
+
+systemctl  restart  elasticsearch
+curl  http://172.16.99.1:9200
+
+
+elasticsearch cluster
+
+
+源码包 运行
+
+yum -y install sudo
+
+useradd  elasticsearch -c user  -d /home/elasticsearch  -s /sbin/nologin
+chown elasticsearch:elasticsearch  -R  /opt/elasticsearch-5.6.3
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch  -v
+
+tar xzvf  /opt/elasticsearch-5.6.3.tar.gz   -C /opt/
+
+配置可以使用root  用户运行
+
+vim /opt/elasticsearch-5.6.3/bin/elasticsearch
+
+
+
+运行
+/opt/elasticsearch-5.6.3/bin/elasticsearch
+
+
+
+
+

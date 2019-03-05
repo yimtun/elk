@@ -1,0 +1,341 @@
+处理流程
+
+输入 input 日志文件
+处理 filter
+输出 output
+
+
+filebeat 输出对象  elasticsearch logstash redis  kafka 
+
+filebeat 两个组成部分
+
+1 prospector
+观察者  勘探者  探测文件是否有变化
+2 harvester 
+收割者  如数据  发送出去
+
+
+可以有多个 prospector 
+不同的prospector 针对的日志文件时不同的
+每一个 prospector  会对每一个日志文件启动一个 harvester 
+一个harvester 针对一个日志文件
+
+/var/log/*.log 
+/var/log/apache2/*
+
+
+filebeat input 配置简介
+
+yaml 语法
+
+filebeat.prospectors:
+- input_type:log
+paths:
+-/var/log/apache/httpd-*.log
+-input_type:log
+paths:
+-/var/log/messages
+-/var/log/*.log
+
+
+
+input_type 
+log
+stdin  标准输入
+
+
+
+
+filebeat output 配置简介
+
+console
+elasticsearch
+logstash
+kafka
+redis
+file  从一个日志输出到另一个文件
+
+
+output.elasticsearch:
+hosst:["http://localhost:9200"]
+username:"admin"
+password: "s3cr3t"
+
+
+output.console:
+pretty:true
+
+filebeat filter 配置简介
+
+input 时处理
+
+include_lines   达到条件 读入这一行
+exclude_lines   达到条件 不读入这一行
+exclude_files   文件名字 符合某个条件时 不读取这个文件
+
+
+output 前处理 --  Processor
+
+drop_event  读取一条数据满足某个条件  不输出直接扔掉
+drop_fields  扔掉某一个字段  
+Decode_json_fields  对一条数据里面 符合json 格式的字段 做json 解析 
+Include_fields    加入一些字段  只 读取某一些字段
+
+
+
+filter 示例
+processors:
+-drop_event:
+when:
+regexp:    
+message:"^DBG"
+
+
+当匹配到一个正则表达式  message 字段以 DBG 开头的时候 就丢弃
+作用 吧 debug  日志丢弃 不做存储
+
+
+processors:
+-decode_json_fields:
+fields:["inner"]
+
+{"outer":"value","inner":"{\"data\":\"value\"}"}
+
+上面一条日志中 inner 字段 里面是一个json
+但是内部做了字符串的处理 实际读取的时候 没有办法
+读到 inner  中  data  的字段 
+
+-decode_json_fields  处理后如下
+
+{"outer":"value","inner":"{"data":"value"}"}
+
+
+filebeat elasticsearch ingest node 特性
+
+filebeat 缺乏数据转换能力
+
+解决  elasticsearch 增加一个新的 node 类型 ingestnode
+
+elasticsearch ingest node
+1 在数据写入es 前对数据进行处理转换
+2 pipline api 
+
+
+filebeat module 
+开箱即用 把常用的日志格式
+
+对于社区常见需求进行配置封装 增加易用性
+
+nginx
+apache
+mysql
+
+
+
+封装内容
+filebeat.yml
+ingest node pipeline 配置
+kibana dashboard 
+
+
+使用时 直接指定日志路径 指定module 即可
+
+
+最佳时间参考
+
+
+filebeat 收集 nginx  log
+
+通过 stdin 收集日志
+通过 console  输出结果
+
+wget  -P /opt/  https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.6.3-linux-x86_64.tar.gz
+
+tar xzvf /opt/filebeat-5.6.3-linux-x86_64.tar.gz   -C /opt/
+
+
+data filebeat 在解析日志过程中 存 日志里面读到的位置 
+filebeat.full.yml 参考配置
+
+yum -y install nginx
+
+systemctl  start  nginx
+
+tail -f /var/log/nginx/access.log
+
+cat > /opt/filebeat-5.6.3-linux-x86_64/nginx.yml  << EOF
+filebeat.prospectors:
+- input_type: stdin
+output.console:
+          pretty: true
+EOF
+
+
+head -n 2 /var/log/nginx/access.log | /opt/filebeat-5.6.3-linux-x86_64/filebeat -e -c /opt/filebeat-5.6.3-linux-x86_64/nginx.yml 
+
+
+tail -f  /var/log/nginx/access.log | /opt/filebeat-5.6.3-linux-x86_64/filebeat -e -c /opt/filebeat-5.6.3-linux-x86_64/nginx.yml
+
+curl http://localhost:80
+
+
+{
+  "@timestamp": "2019-03-05T08:20:21.591Z",
+  "beat": {
+    "hostname": "localhost.localdomain",
+    "name": "localhost.localdomain",
+    "version": "5.6.3"
+  },
+  "input_type": "stdin",
+  "message": "::1 - - [05/Mar/2019:16:20:21 +0800] \"GET / HTTP/1.1\" 200 6045 \"-\" \"curl/7.29.0\" \"-\"",
+  "offset": 0,
+  "source": "",
+  "type": "log"
+}
+
+
+把nginx 日志内容 当作  message   作为 message 字段中的 内容
+nginx  每一条日志被 封装在  json 中
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

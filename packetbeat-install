@@ -1,0 +1,20 @@
+wget  -P /opt/  https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-5.6.3-linux-x86_64.tar.gz
+
+
+tar xzvf /opt/packetbeat-5.6.3-linux-x86_64.tar.gz   -C /opt/
+
+
+cat >  /opt/packetbeat-5.6.3-linux-x86_64/es.yml  << EOF
+packetbeat.interfaces.device: lo
+packetbeat.protocols.http:
+   ports: [9200]
+   send_request: true
+   include_body_for: ["application/json","x-www-form-urlencoded"]
+output.console:
+pretty: true
+EOF
+
+
+/opt/packetbeat-5.6.3-linux-x86_64/packetbeat  -e -c /opt/packetbeat-5.6.3-linux-x86_64/es.yml -strict.perms=false
+
+curl  http://127.0.0.1:9200
