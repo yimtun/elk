@@ -1,0 +1,163 @@
+172.16.99.2:8601
+
+GET _cat/indices
+
+GET logstash-2019.03.06/_search
+
+
+
+
+lotstash  索引加入到  index pattern  
+
+Management 
+
+index pattern
+logstash-*
+
+Expand index pattern when searching [DEPRECATED]   yes
+
+create
+
+
+
+Discover
+
+
+
+
+172.16.99.3:5601  执行
+
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+
+
+
+
+172.16.99.2:8601
+查看
+
+index         add
+path          add
+query_body    add 
+responsetime  add 
+
+
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+
+实际响应时间
+
+长连接
+
+172.16.99.3:5601  创建查询几次
+
+
+
+save
+
+save search
+
+es query 
+
+save 
+
+
+
+
+可视化分析
+
+visualize
+
+create a visualization
+
+pie 
+
+基于一个 index  或者基于一个 save search
+
+选择  logstash-*
+
+split slices
+aggregation
+terms
+
+field
+index.keyword
+
+order
+descendins size  20
+
+点击上方 运行按钮  apply  changes
+
+save
+query index slices
+
+
++  line
+logstash-*
+
+X-Axis   Data Histogram
+
+Y-Axis Average  responsetime
+
+由于 .kibaba 导致时间 很长  不够准确
+
+
+
+
+
+
+
+
+
+
+
+
+curl -XDELETE http://127.0.0.1:8200/logstash-*
+curl -XDELETE http://127.0.0.1:8200/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

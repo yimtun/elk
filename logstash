@@ -1,0 +1,203 @@
+logstash 入门
+
+Data Shipper  数据收集
+
+
+ETL
+
+Extract  数据提取
+Transform  数据转换
+Load     load 到对外的输出 
+
+
+
+处理流程
+input   filter  output
+
+input  file redis beats kafka 
+
+filter
+
+grok  表达式 正则 
+mutate   对结构化数据的字段进行增删改查
+drop
+date
+
+
+
+
+output   stdout elasticsearch redis kafka
+
+logstash 配置
+
+input {file { path => "/tmp/abc.log"}}
+
+output {stdout {codec => rubydebug}}
+
+
+
+处理流程filter 配置
+
+Grok 
+基于正则表达式提供了丰富可重用的模式 pattern
+基于此可以将非结构化的数据作结构化处理
+
+Date
+将字符串类型的时间字段转换为时间戳类型 方便后续数据处理
+
+Mutate
+进行增加 修改 删除 替换等字段的相关处理
+
+
+
+Grok 示例
+
+11.24.123.9 GET/index.html 12345
+                0.054
+
+
+%{IP:clinet} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes} %{NUMBER:duration}
+
+duration 指 结构化数组的 之后的字段名
+
+{
+"client": "12.24.65.12",
+"method": "GET",
+"request": 12345,
+"duration": 0.054
+}
+
+
+
+
+
+logstash 演示
+
+
+nginx log
+
+
+wget  -P /opt/   https://artifacts.elastic.co/downloads/logstash/logstash-5.6.3.tar.gz
+
+tar xzvf /opt/logstash-5.6.3.tar.gz   -C  /opt/
+
+
+cat > /opt/logstash-5.6.3/nginx_logstash.conf << EOF
+input {
+  stdin {}
+}
+
+filter {
+   grok {
+      match => {
+        "message" => '%{IPORHOST:remote_ip} - %{DATA:user_name} \[%{HTTPDATE:time}\] "%{WORD:request_action} %{DATA:request} HTTP/%{NUMBER:http_version}" %{NUMBER:response} %{NUMBER:bytes} "%{DATA:referrer}" "%{DATA:agent}"'
+
+      }
+   }
+
+   date  {
+     match => ["time","dd/MMM/YYYY:HH:mm:ss Z"] 
+     locale => en
+    }
+
+   geoip {
+     source => "remote_ip"
+      target => "geoip"
+   }
+
+    useragent {
+       source => "agent"
+       target => "user_agent"
+     }
+}
+
+
+output {
+ stdout {
+ codec => rubydebug
+}
+}
+EOF
+
+
+
+
+head -n 2 /var/log/nginx/access.log | /opt/logstash-5.6.3/bin/logstash  -f /opt/logstash-5.6.3/nginx_logstash.conf
+
+tail -n 1 /var/log/nginx/access.log  | /opt/logstash-5.6.3/bin/logstash  -f /opt/logstash-5.6.3/nginx_logstash.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+F
+

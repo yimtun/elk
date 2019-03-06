@@ -16,6 +16,8 @@ sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch  -v
 
 curl http://127.0.0.1:9200
 
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ehttp.host=172.16.99.2 -v
+
 
 多实例启动
 sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ehttp.port=8200 -Epath.data=node2 -v
