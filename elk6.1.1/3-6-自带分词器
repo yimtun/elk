@@ -1,0 +1,105 @@
+es自带如下的分词器
+standard
+simple
+whitespace
+stop
+keyword
+pattern
+language
+
+
+Tokenizer
+standard
+
+tokenfilters   从上到下的执行顺序
+standard
+lower case
+stop disable by default
+
+POST _analyze
+{
+"analyzer":"standard",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+
+simple analyzer 
+按照非字母字符切分小写处理
+数字 横线 ' 都会被去掉
+
+Tokenizer
+lower Case
+
+POST _analyze
+{
+"analyzer":"simple",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+
+
+whitespace analyzer  按空格切分
+
+tokenizer
+whitespace
+
+POST _analyze
+{
+"analyzer":"whitespace",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+
+stop analyzer
+stop word指语气助词等修饰性词语比如 the an  的 这  等等
+其组成如图 相比 simple analyzer 多了stop word 处理
+
+tokenizer 
+lower case
+
+token filters
+stop
+
+POST _analyze
+{
+"analyzer":"stop",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+
+keyword analyzer
+
+不分词 直接将输入作为一个单词输出
+
+tokenizer
+keyword
+
+POST _analyze
+{
+"analyzer":"keyword",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+
+
+pattern analyzer
+特性
+-通过正则表达式自定义分隔符
+-默认是\W+   即非字词的符号作为分隔符   '   -
+
+Tokenizer
+pattern
+
+token filters
+lower case
+stop disable by default
+
+
+POST _analyze
+{
+"analyzer":"pattern",
+"text":"The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+
+language analyzer
+-提供了30+常见语言的分词器

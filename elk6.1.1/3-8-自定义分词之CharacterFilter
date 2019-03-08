@@ -1,0 +1,48 @@
+自定义分词
+当自带的分词无法满足需求时 可以自定义分词
+通过 自定义 character filters    tokenizer   和 token filter 实现
+
+character filters
+-在tokenizer之前对原始文本进行处理 比如增加 删除 或替换字符等
+-自带的如下
+ html strip 去除 html标签 和转换html实体
+ mapping 进行字符替换操作
+ pattern replace 进行正则匹配替换
+
+-会影响后续tokenizer解析的 position 和 offset信息
+
+测试 keyword 类型的 tokenizer 可以直接看到输出结果
+
+POST _analyze
+{
+"tokenizer":"keyword",
+"char_filter":["html_strip"],
+"text":"<p>I&apos;m so <b>happy</b>!</p>"
+}
+
+
+{
+  "tokens": [
+    {
+      "token": """
+
+I'm so happy!
+
+""",
+      "start_offset": 0,
+      "end_offset": 32,
+      "type": "word",
+      "position": 0
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+

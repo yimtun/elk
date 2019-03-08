@@ -1,0 +1,193 @@
+搜索项目
+
+1 了解数据及建模
+类 airbnb 网站的房屋信息  csv
+
+2 数据建模
+```
+PUT testairbnb
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "analysis": {
+        "analyzer": {
+          "autosuggest_analyzer": {
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "autosuggest_filter"
+            ],
+            "tokenizer": "standard",
+            "type": "custom"
+          },
+          "ngram_analyzer": {
+            "filter": [
+              "lowercase",
+              "asciifolding",
+              "ngram_filter"
+            ],
+            "tokenizer": "standard",
+            "type": "custom"
+          }
+        },
+        "filter": {
+          "autosuggest_filter": {
+            "max_gram": "20",
+            "min_gram": "1",
+            "token_chars": [
+              "letter",
+              "digit",
+              "punctuation",
+              "symbol"
+            ],
+            "type": "edge_ngram"
+          },
+          "ngram_filter": {
+            "max_gram": "9",
+            "min_gram": "2",
+            "token_chars": [
+              "letter",
+              "digit",
+              "punctuation",
+              "symbol"
+            ],
+            "type": "ngram"
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "dynamic": false,
+      "properties": {
+        "accommodates": {
+          "type": "integer"
+        },
+        "bathrooms": {
+          "type": "integer"
+        },
+        "bed_type": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "bedrooms": {
+          "type": "integer"
+        },
+        "beds": {
+          "type": "integer"
+        },
+        "date_from": {
+          "type": "date",
+          "format": "yyyyMMdd"
+        },
+        "date_to": {
+          "type": "date",
+          "format": "yyyyMMdd"
+        },
+        "has_availability": {
+          "type": "boolean"
+        },
+        "host_image": {
+          "type": "keyword",
+          "ignore_above": 256,
+          "index": false
+        },
+        "host_name": {
+          "type": "text",
+          "analyzer": "autosuggest_analyzer",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "image": {
+          "type": "keyword",
+          "ignore_above": 256,
+          "index":false
+        },
+        "listing_url": {
+          "type": "keyword",
+          "ignore_above": 256
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "name": {
+          "type": "text",
+          "analyzer": "autosuggest_analyzer",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "price": {
+          "type": "float"
+        },
+        "property_type": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "room_type": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+```
+
+
+
+mapping dynamic false
+bed_type  text
+keyword 
+
+date_from date_to   type date
+
+host_image  type  keyword  不需要搜索
+index  false   index关掉 
+
+
+host_name  type text  全文匹配 
+analyzer  autosuggest_analyzer 分词器
+
+自定义分词器
+
+autosuggest_analyzer
+filter  这个分词器可以实现自动补全
+
+
+使用logstash 导入数据  CSV
+
+
+查看数据
+
+GET  testairbnb/_search
+
+

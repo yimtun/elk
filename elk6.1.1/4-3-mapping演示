@@ -1,0 +1,72 @@
+DELETE  /my_index
+
+PUT my_index
+{
+  "mappings": {
+    "doc":{
+      "dynamic":false,
+      "properties": {
+        "title":{
+          "type": "text"
+        },
+        "name":{
+          "type": "keyword"
+        },
+        "age":{
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
+
+
+
+GET my_index/_mapping
+
+
+PUT my_index/doc/1
+{
+  "title" : "hello,world",
+  "desc":"nothing here"
+}
+
+
+可以写入
+
+查询
+GET my_index/doc/_search
+{
+  "query": {
+    "match": {
+      "title": "hello"
+    }
+  }
+}
+
+hits 1
+又返回
+再次查询
+
+GET my_index/doc/_search
+{
+  "query": {
+    "match": {
+      "desc": "here"
+    }
+  }
+}
+
+hits 0
+
+
+
+
+
+
+
+
+
+
+
+

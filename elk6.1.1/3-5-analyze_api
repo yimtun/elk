@@ -1,0 +1,128 @@
+es 提供了一个测试分词的api 接口  方便验证分词效果 endpoint 和 _analyze
+
+当时用es做搜索的时候如果输入的关键词返回的结果和预期的不一样排查时时用analyze api 进行排查
+
+这个api 是用来测试分词结果的如下三种 可以指定analyze api  进行测试
+
+- 可以直接指定analyzer进行测试
+- 可以直接指定索引中的字段进行测试
+- 可以自定义分词器进行测试
+
+1 直接指定analyzer 进行测试 可以直接指定使用哪个分词器
+
+method   endpoint 
+POST _analyze
+{
+"analyzer":"standard",
+"text":"hello world"
+}
+
+
+tokens 数组
+
+{
+  "tokens": [
+    {
+      "token": "hello",
+      "start_offset": 0,      原始位置
+      "end_offset": 5,
+      "type": "<ALPHANUM>",
+      "position": 0           结果位置
+    },
+    {
+      "token": "world",
+      "start_offset": 6,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    }
+  ]
+}
+
+
+
+
+
+
+
+2 指明索引的字段进行分词测试 
+场景 已经创建好了所引进 针对索引的一个字段进行查询的时候 它的输出和预期的不一样
+可以针对这个字段测试 它的分词 不需要知道这个字段的分词器是什么 直接测试即可
+
+POST /test_index/doc
+{
+ "username":"tom",
+ "age":20
+}
+
+POST test_index/_analyze
+{
+"field":"username",
+"text":"hello world!"
+}
+
+
+
+{
+  "tokens": [
+    {
+      "token": "hello",
+      "start_offset": 0,
+      "end_offset": 5,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "world",
+      "start_offset": 6,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    }
+  ]
+}
+
+
+创建字段没有指定分词器时 默认使用 standard 分词器
+
+
+
+
+3 自定义分词器  自定义填进 分词器的三个部分
+
+-character filters  针对原始文本进行处理 比如去除html 特殊标记
+-tokenizer   将原始文本按照一定规则切分为单词                         standard
+-token filters 针对处理的单词进行再加工 比如转小写删除或新增处理      ["lowercase"]
+
+POST _analyze
+{
+"tokenizer":"standard",
+"filter":["lowercase"],
+"text":"Hello World!"
+}
+
+
+{
+  "tokens": [
+    {
+      "token": "hello",
+      "start_offset": 0,
+      "end_offset": 5,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "world",
+      "start_offset": 6,
+      "end_offset": 11,
+      "type": "<ALPHANUM>",
+      "position": 1
+    }
+  ]
+}
+
+
+
+
+
+

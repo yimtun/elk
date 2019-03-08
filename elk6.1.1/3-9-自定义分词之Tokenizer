@@ -1,0 +1,47 @@
+Tokenizer
+-将原始文本按照一定规则切分为单词 term or  token
+-自带的如下：
+standard 按照单词进行分割
+letter 按照非字符类进行分割
+whitespace 按照空格进行分割
+UAX URL Email 按照standard 分割 但是不会分割邮箱和 url
+NGram 和 Edge NGram 连词分割   自动提示 
+Path Hierarchy 按照文件路径进行分割
+
+POST _analyze
+{
+"tokenizer":"path_hierarchy",
+"text":"/one/two/three"
+}
+
+
+
+{
+  "tokens": [
+    {
+      "token": "/one",
+      "start_offset": 0,
+      "end_offset": 4,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "/one/two",
+      "start_offset": 0,
+      "end_offset": 8,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "/one/two/three",
+      "start_offset": 0,
+      "end_offset": 14,
+      "type": "word",
+      "position": 0
+    }
+  ]
+}
+
+
+
+
