@@ -1,0 +1,112 @@
+logstash-2015.05.18
+logstash-2015.05.18-id
+
+设置绝对时间
+
+直方图 拖拉可以选择时间
+
+选择要分析的数据源
+
+搜索框
+
+lucene
+geo.src.keyword:CN
+
+888hits
+
+managemanet advanced settings search:queryLanguage:switch:enable   true
+
+kuery
+
+
+
+
+GET  logstash-*/_search
+{
+  "query":{
+    "match":{
+      "geo.src.keyword":"CN"
+    }
+  }
+}
+
+
+
+
+{"match":{"geo.src.keyword":"CN"}}
+
+add a filter
+字段
+
+machine.os  is win
+
+对号 是否应用这个条件 
+图钉 组其他页面 这个条件也会存在 
+减号  取反
+删除
+编辑
+
+
+selected fields
+_source 
+Time  时间戳字段 @timestamp    _source  文档原始内容
+
+available fields 
+快速过滤 是否可以聚合分析 yes   是否可搜索 yes Type number  reset 重新显示所有字段  
+
+
+popular 
+
+t message  txt  字符串类型
+#  number 类型
+表  时间类型
+地球 geoip 类型
+? 数组类型
+
+
+@tags
+kibana 500 条记录限定 
+分析字段 时  加号  减号 数据探索
+
+
+
+table 几号减号  快速过滤
+图书符号  是否显示message 
+* 查看字段是否存在  @message  exists  把包含message  字段的文旦过滤出来
+
+view single document
+只看一个文档
+
+view surrounding documents 
+高亮的一条就是点进来的 document
+
+这条document 发生时 它前后的 documetn 
+
+load more
+
+
+time  @tags clientip geo.src request machine.os @message
+
+创建三个查询条件 并保存
+
+machine.os is  win
+@tags is not success
+@message exists
+
+保存  save 
+logstash-test
+
+New  Open  logstash-test
+
+右侧 actions
+All filters  Enable  disable pin unpin invert toggle remove 
+
+disable 把所有过滤条件都disable  去掉 上方条件 {"match":{"geo.src.keyword":"CN"}}  save
+
+后续做分析的时候 可以基于这个保存的 query  来做
+
+
+查看kibana 根据查询条件请求的内容 
+向上箭头  选择 Request
+
+

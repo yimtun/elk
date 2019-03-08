@@ -1,0 +1,25 @@
+index  在mysql 中相当于一个  table
+table 是有自己的 scheme的
+有自己的表结构的定义 对应的在es里面
+每个索引都有自己的 mapping 定义 用户定义字段名 和类型
+
+索引index 中存储具有相同结构的 文档 document
+每个索引都有自己的 mapping 定义 用户定义字段名 和类型
+
+一个集群可以有多个索引 比如
+nginx 日志存储的时候可以按照日期每天生成一个 index 
+来存储
+
+nginx-log-2017-01-01
+nginx-log-2017-01-02
+nginx-log-2017-01-03
+
+
+
+
+
+
+
+
+
+

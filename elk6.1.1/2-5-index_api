@@ -1,0 +1,58 @@
+es 有专门的 index api  用于创建 更新删除 索引配置 等
+
+create index 
+put /text_index
+
+search indexs
+get _cat/indices
+
+wget -P /opt https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.tar.gz
+
+chown elasticsearch:elasticsearch  -R /opt/elasticsearch-6.1.1
+
+chmod 777 -R /opt/elasticsearch-6.1.1/*
+
+rm -rf /opt/elasticsearch-6.1.1/imooc/
+
+sudo -u elasticsearch /opt/elasticsearch-6.1.1/bin/elasticsearch -Ecluster.routing.allocation.disk.threshold_enabled=false -Epath.data=/opt/elasticsearch-6.1.1/imooc
+
+
+
+wget  -P /opt https://artifacts.elastic.co/downloads/kibana/kibana-6.1.1-linux-x86_64.tar.gz
+
+
+/opt/kibana-6.1.1-linux-x86_64/bin/kibana -e http://127.0.0.1:9200 -H 172.16.99.2 -p 5601
+
+
+
+kinaba
+dev tools  get to work
+
+PUT  /test_index
+
+GET _cat/indices
+
+DELETE  /test_index
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,201 @@
+创建文档 document
+
+指定id  创建文档
+
+         index    type    id
+PUT  /test_index/doc/1
+{
+ "username":"alfred",
+ "age":1
+}
+
+
+
+{
+  "_index": "test_index",
+  "_type": "doc",
+  "_id": "1",
+  "_version": 1,     每次操作会加1  锁的机制 并行操作文档的时候 
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 0,
+  "_primary_term": 1
+}
+
+
+
+
+创建文档时 如果索引不存在 es 会自动创建对应的index 和 type
+type 以后会被去掉
+
+
+不指定id  创建文档   使用 POST 
+
+POST /test_index/doc
+{
+ "username":"tom",
+ "age":20
+}
+
+
+search documetn  with  dockment id 
+
+
+GET /test_index/doc/1
+
+{
+  "_index": "test_index",
+  "_type": "doc",
+  "_id": "1",
+  "_version": 1,
+  "found": true,
+  "_source": {     存入json文档原始数据
+    "username": "alfred",
+    "age": 1
+  }
+}
+
+
+search all documents in one index
+GET /test_index/doc/_search
+
+took 查询耗时
+hits 命中文档  
+total  符合条件的文档总数
+
+hits 返回的文档详情数据数组 默认前10个文档
+
+_index  index 名字 索引名
+_id  文档id
+_score 文档的得分
+_source  文档详情
+
+指定查询条件进行查询
+
+GET /test_index/doc/_search
+{
+  "query": {
+    "term": {
+      "_id":"1"
+    }
+  }
+}
+
+
+批量创建 写入 文档api
+
+es 允许一次创建多个文档 从而减少网络传输开销 提升写入速度
+
+- endpoint 为 _bulk 如下:
+
+每一行都是一行 json 
+
+第一行json 指明操作的原始信息
+开头 json 字段 指明 操作类型
+
+index 创建文档  创建文档是 即使已经存在 也会把之前的覆盖掉
+update  更新文档
+create 创建文档 只创建 当这个文档存在的时候 会报错
+delete 删除文档
+
+
+POST _bulk
+{"index":{"_index":"test_index","_type":"doc","_id":"3"}}
+{"username":"alfred","age":10}
+{"delete":{"_index":"test_index","_type":"doc","_id":"1"}}
+{"update":{"_id":"2","_index":"test_index","_type":"doc"}}
+{"doc":{"age":"20"}}
+
+
+
+{
+  "took": 12,         耗时
+  "errors": false,
+  "items": [          每个bulk返回的结果 
+    {
+      "index": {
+        "_index": "test_index",
+        "_type": "doc",
+        "_id": "3",
+        "_version": 5,
+        "result": "updated",     已经存在 就是跟新了
+        "_shards": {
+          "total": 2,
+          "successful": 1,
+          "failed": 0
+        },
+        "_seq_no": 5,
+        "_primary_term": 1,
+        "status": 200
+      }
+    },
+    {
+      "delete": {
+        "_index": "test_index",
+        "_type": "doc",
+        "_id": "1",
+        "_version": 1,
+        "result": "not_found",
+        "_shards": {
+          "total": 2,
+          "successful": 1,
+          "failed": 0
+        },
+        "_seq_no": 7,
+        "_primary_term": 1,
+        "status": 404
+      }
+    },
+    {
+      "update": {
+        "_index": "test_index",
+        "_type": "doc",
+        "_id": "2",
+        "_version": 3,
+        "result": "updated",
+        "_shards": {
+          "total": 2,
+          "successful": 1,
+          "failed": 0
+        },
+        "_seq_no": 2,
+        "_primary_term": 1,
+        "status": 200
+      }
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+批量 查询文档 
+
+GET /_mget
+{
+  "docs":[
+    {
+      "_index":"test_index",
+      "_type":"doc",
+      "_id":"1"
+    },
+    {
+      "_index":"test_index",
+      "_type":"doc",
+      "_id":"2"
+    }
+    ]
+}
+
+
+
+
+
