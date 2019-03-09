@@ -1,0 +1,92 @@
+索引模板，英文名 Index Template 主要用户在新建索引时自动应用预先设定的配置
+简化索引创建的操作步骤
+
+-可以设定索引的配置和mapping
+-可以有多个模板 根据order设置 order大的覆盖小的配置
+
+
+索引模板API  endpoint 为 _template 
+
+GET _template
+会出现一个kibana 自己的 template
+
+
+
+
+
+DELETE  test_index
+
+
+GET _template
+
+PUT _template/test_template
+{
+  "index_patterns":["te*","bar*"],
+  "order":0,
+  "settings":{
+    "number_of_shards":1
+  },
+  "mappings":{
+    "doc": {
+      "_source": {
+        "enabled": false
+      },
+      "properties": {
+        "name":{
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
+GET _template/test_template
+
+PUT _template/test_template2
+{
+  "index_patterns":["test*"],
+  "order":1,
+  "settings":{
+    "number_of_shards":1
+  },
+  "mappings":{
+    "doc": {
+      "_source": {
+        "enabled": true
+      }
+    }
+  }
+}
+
+GET _template/test_template2
+
+
+
+
+
+
+
+PUT foo_index
+GET foo_index/_mapping
+
+PUT bar_index
+GET bar_index/_mapping
+GET bar_index/
+
+PUT test_index
+GET test_index/_mapping
+GET test_index/
+
+
+
+
+
+
+
+
+
+
+
+
+
+

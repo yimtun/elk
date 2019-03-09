@@ -1,0 +1,101 @@
+Dynamic  Mapping
+
+日期的自动识别可以自行配置日期格式 以满足各种需求
+
+-默认是：
+["strict_date_optional_time","yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"]
+
+strict_date_optional_time 是ISO datetime个格式 完整格式类似下面
+
+- YYYY-MM-DDThh:mm:ssTZD (eg 1997-07-16-16T19:20:30+01:00)
+
+
+- dynamic_date_formats 可以自定义日期类型
+- date_detection 可以关闭日期自动识别的机制
+
+这两个参数都是直接在 type 下设置
+
+DELETE my_index
+
+PUT my_index
+{
+  "mappings": {
+    "my_type":{
+      "dynamic_date_formats": ["MM/dd/yyyy"]
+    }
+  
+}
+  
+}
+
+PUT  my_index/my_type/1
+{
+  "create_date":"09/25/2015"
+}
+
+
+
+GET my_index/_mapping
+
+
+
+
+
+字符串是数字时 默认不会自动识别为整型 因为字符串中出现数字时完全合理的
+-numeric_detection 可以开启字符串中数字的自动识别 
+
+
+DELETE my_index
+
+PUT my_index
+{
+  "mappings": {
+    "my_type":{
+     "numeric_detection": true
+    }
+  
+}
+  
+}
+
+PUT  my_index/my_type/1
+{
+  "my_float":"1.0",
+  "my_integer":"1"
+}
+
+
+
+GET my_index/_mapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
