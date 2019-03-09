@@ -1,0 +1,51 @@
+URI Search
+
+通过url query  参数实现搜索，常用参数如下：
+
+-q 指定查询的语句 语法为 Query String Syntax
+-df 如果在q 的参数中不指定字段时默认查询的字段如果不指定es会查询所有字段
+-sort 排序
+-timeout 指定超时时间 默认不超时
+-from,size 用于分页
+
+
+
+示例
+
+查询user字段包含alfred的文档，结果按照age升序排列，返回弟5~14个文档，如果超过1s
+没有结束，则以超时结束
+
+q 没有指定字段
+df 指定user字段
+
+user字段中包含alfred 的文档
+
+sort=age 按age字段排序
+asc  升序
+
+from 4  获取第5 到
+size 10   第 4+10=14 
+
+timeout 1s
+
+
+
+URI Search  -  Query String Syntax
+
+
+term 与 phrase
+
+-term 就是一个个的单词      alfred way 等效于 alfred OR way  是两个term  只要包含某一个就符合查询需求
+-phrase 就是词语 要求有先后顺序 "alfred way"  是一个词语 对立面的term 是有顺序要求的
+
+
+泛查询
+-alfred 等效于
+
+
+
+
+
+
+GET /my_index/_search?q=alfred&df=user&sort=age:asc&from=48&size=10&timeout=1s
+

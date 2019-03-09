@@ -1,0 +1,31 @@
+Search  API
+实现对es中存储的数据进行查询分析
+endpoint 为 _search 如下所示
+
+GET /_search    所有数据查询
+GET /my_index/_search
+GET /my_index1,my_index2/_search
+GET /my_*/_search  指定索引查询 可以一次查询多个
+
+
+查询主要有两种形式
+
+-URI Search
+ 操作简便 方便通过命令行调试
+ 仅包含部分查询语法
+
+GET /my_index/_search?q=user:alfred
+查询字段user包含alfred的所有文档
+
+
+
+-Request Body Search
+ es提供的完备查询语法 Query DSL(Domain Specific Language)
+
+GET  /my_index/_search
+{
+"query":{
+"term":{"user":"alfred"}
+}
+}
+
