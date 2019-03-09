@@ -1,0 +1,99 @@
+ 自定义mapping
+index_options 用户控制倒排索引记录的内容 有如下4种配置
+
+-docs 只记录doc  id
+-freqs 记录doc id 和 term frequencies 词频
+-positions 记录doc  id term frequencies 和 term position 词语前后顺序 
+-offsets 记录 doc  id  term frequencies  term position  和  character offsets  高亮
+
+
+
+text 类型默认positions 其他类型默认为docs
+
+记录内容越多 占用空间越大
+
+
+DELETE my_index
+
+PUT my_index
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "cookie": {
+          "type": "text",
+          "index": true,
+          "index_options": "offsets"
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+null_value
+
+-当字段遇到null 值时的处理策略 默认为null 即空值
+此时es会忽略该值 可以通过设定该值 设定字段的默认值
+
+
+
+DELETE my_index
+
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "status_code": {
+          "type": "keyword",
+          "null_value": "NULL"
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
