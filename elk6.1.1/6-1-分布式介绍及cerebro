@@ -1,0 +1,35 @@
+es支持集群模式，是一个分布式系统，其好处有两个
+-增大系统容量，内存，磁盘 使es集群可以支持PB级数据
+-提高系统可用性，即使部分节点停止服务，这个集群仍然可以正常服务
+
+es集群由多个es实例组成
+-不同集群通过集群名字来区分 可通过cluster.name 进行修改 默认为elasticsearch
+-每个es实例本质上是一个JVM进程 且有自己的名字 通过 node.name 进行修改
+
+
+cerebro 插件安装与运行 
+-https://github.com/lmenezes/cerebro
+-https://github.com/lmenezes/cerebro/releases
+
+
+wget  -P /opt/   https://github.com/lmenezes/cerebro/releases/download/v0.7.2/cerebro-0.7.2.tgz
+
+tar xzvf /opt/cerebro-0.7.2.tgz    -C /opt/
+
+
+/opt/cerebro-0.7.2/bin/cerebro
+
+
+http://172.16.99.2:9000
+
+Node address
+
+http://127.0.0.1:9200
+
+
+
+
+
+
+
+

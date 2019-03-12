@@ -1,0 +1,68 @@
+搜索引擎用来回答如下问题：
+-请告诉我地址为上海的所有订单
+-请告诉我最近一天内创建但没有付款的所有订单
+
+聚合分析可以回答如下问题：
+-请告诉我最近1周每天的订单成交量是多少
+-请告诉我最近1个月每天的平均订单金额是多少
+-请告诉我最近半年卖的最火的前五个商品是什么
+
+聚合分析 英文为aggregation 是es除了搜索功能外针对es数据做统计分析的功能
+
+-功能丰富，提供bucket metric pipeline 等多种分析方式 可以满足大部分分析需求
+-实时性高 所有计算结果都是即时返回
+
+
+
+聚合分析
+聚合分析作为search的一部分 api如下所示：
+
+关键词 aggs 与 query 同级
+
+
+GET test_search_index/_search
+{
+"size":0
+"aggs":{  -----关键词 与 query 同级
+  "<aggregation name>":{  --- 自定义聚合名称
+  "<aggregation_type>":{   json object
+   "<aggregation_body>"   
+  }
+  
+  }
+
+}
+}
+
+
+子查询  子聚合  和 aggregation_type 同级的
+
+可以包含多个局和分析
+
+
+
+GET test_search_index/_search
+{
+"size":0.
+"aggs":{
+"people_per_job":{
+"term":{    分桶操作
+"field":"job.keyword"
+}
+}
+}
+}
+
+
+
+
+局和分析 分类
+es将聚合分析主要分为如下4类：
+-bucket 分桶型 类似SQL 中的group by 语法
+-metric 指标分析类型 如计算最大值 最小值 平均值
+-pipeline 管道分析类型 基于上一级的聚合分析结果进行再分析
+-matrix    矩阵分析类型
+
+
+
+

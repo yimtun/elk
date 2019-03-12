@@ -1,0 +1,10 @@
+metric 聚合分析
+主要分为如下两类：
+-单值分析 只输出一个分析结果
+
+-min,max,avg,sum
+-cardinality   计算数目 distinc count 
+
+-多值分析，输出多个分析结果
+
+-stats extended stats
