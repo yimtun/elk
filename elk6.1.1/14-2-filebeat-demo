@@ -1,0 +1,103 @@
+cat > /opt/demov1.yml << EOF
+filebeat.prospectors:
+- type: stdin
+  tags: ["test"]
+  fields:
+      name: alfred
+  fields_under_root: true
+
+
+output.console:
+    pretty: true
+    enabled: true
+EOF
+
+
+
+./filebeat -e -c   /opt/demov1.yml 
+
+
+message  "abc"
+"tags":[
+ "test"
+]
+
+
+
+
+
+filebeat 以json解析输入
+
+cat > /opt/demov2.yml << EOF
+filebeat.prospectors:
+- type: stdin
+  tags: ["test"]
+  fields:
+      name: alfred
+  #fields_under_root: true
+  json.keys_under_root: true
+  json.add_error_key: true
+
+output.console:
+    pretty: true
+    enabled: true
+EOF
+
+
+
+./filebeat -e -c   /opt/demov2.yml
+输入不是json的数据会报错
+ ERR Error decoding JSON: invalid character 'd' looking for beginning of value
+
+
+输入json格式数据
+{"age":10}
+
+{"age":10}
+{
+  "@timestamp": "2019-03-13T02:42:23.165Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.1.1"
+  },
+  "age": 10,
+  "source": "",
+  "tags": [
+    "test"
+  ],
+  "prospector": {
+    "type": "stdin"
+  },
+  "fields": {
+    "name": "alfred"
+  },
+  "beat": {
+    "name": "localhost.localdomain",
+    "hostname": "localhost.localdomain",
+    "version": "6.1.1"
+  },
+  "offset": 11
+}
+
+
+
+调试执行
+
+./filebeat -e -c   /opt/demov2.yml  -d "publish"
+
+前面的输入时 debug  publish envent
+后面的是输出到 output 
+
+
+
+
+
+
+
+
+
+
+
+
+

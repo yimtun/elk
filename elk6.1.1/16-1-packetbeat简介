@@ -1,0 +1,75 @@
+抓取网络包数据
+
+自动解析网络包协议 
+ICMP DNS
+HTTP
+MYSQL PGSQL MONGODB
+MEMCACHE
+Thrift
+TLS
+
+常见工具
+tcpdump
+wireshark
+
+packetbeat 抓包有两种
+-pcap  基于libpcap 实现 跨平台支持
+-af_packet 仅linux 基于内核映射的嗅探技术 性能更好
+
+af_packet 配置
+
+packetbeat.interfaces.device: eth0
+packetbeat.interfaces.type: af_packet
+packetbeat.interfaces.buffer_size_mb: 100
+
+packetbeat 配置协议
+
+packetbeat.protocols:
+
+-type: icmp
+enable: true
+
+-type: dns
+ ports: [53]
+
+ -type: http
+  ports [80,8080,8000,5000,8002]
+
+-type: amqp
+ ports: [5672]
+
+-type: cassandra
+ ports: [9042]
+
+-type: memcache
+ ports: [11211]
+
+-type: mysql
+ ports: [3306]
+
+ -type: redis
+  ports: [6379]
+
+
+
+抓取网络流量数据 不涉及解析协议 network flows
+
+packetbeat.flows:
+ timeout: 30s
+ period: 10s
+
+period 
+final:true
+
+flow_id
+source:
+stats 
+dest:
+stats
+
+
+
+
+
+
+节点 之间流量情况
