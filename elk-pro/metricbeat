@@ -1,0 +1,1 @@
+wget -P /opt https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-6.5.4-linux-x86_64.tar.gz

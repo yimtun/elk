@@ -1,0 +1,31 @@
+非结构化数据解析成json
+
+1正则表达式
+
+2 grok
+
+%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\]
+%{WORD:verb} %{DATA:request} HTTP/%{NUMBER:httpversion}"
+%{NUMBER:response:int} (?:-|%{NUMBER:bytes:int})
+%{QS:referrer} %{QS:agent}
+
+
+IP
+HOSTNAME
+IPORHOST
+
+grok 内置pattern
+https://github.com/logstash-plugins/logstash-patterns-core/blob/master/patterns/grok-patterns
+
+grok 语法
+-%{SYNTAX:SEMANTIC}
+SYNTAX 为grok pattern 名称 SEMANTIC 为赋值字符安名称
+%{NUMBER:duration} 可以匹配数值类型 但是grok 匹配出的内容那都是字符串类型
+   可以通过在最后指定 int  或 float 类强制转换类型
+
+%{NUMBER:duration:float}
+
+
+https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+
+

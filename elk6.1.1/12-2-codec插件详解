@@ -1,0 +1,105 @@
+codec plugin 作用于 input 和 output plugin 负责将数据在原始与logstash event 之间
+转换 常见的codec 有：
+
+-plain 读取原始内容
+-dotc 将内容简化为点进行输出
+-rubydebug 将logstash events 按照ruby 格式输出 方便调试
+-line 处理带有换行符的内容
+-json 处理json 格式的内容
+-multiline 处理多行数据的内容
+
+
+
+/opt/logstash-6.1.1/config/logstash.yml
+path.config  去掉
+
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{codec=>line}}output{stdout{codec=>rubydebug}}"
+
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{codec=>line}}output{stdout{codec=>rubydebug}}"
+
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{codec=>line}}output{stdout{codec=>dots}}" 
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{codec=>json}}output{stdout{codec=>rubydebug}}" 
+没有 message 字段
+
+
+
+
+multiline
+当一个event的message由多行组成时 需要使用该 codec 
+常见的情况是堆栈信息的处理 如下所示
+
+multiline设置参数
+主要设置如下
+pattern 设置行匹配的正则表达式 可以使用grok
+what previous|next 如果匹配成功 那么匹配行是归属上一个事件还是归属下一个事件
+negate true of false 是否对pattern的结果取反
+
+
+
+示例
+xxxxx
+  at
+  at
+  at
+
+有空格的都属于和第一行的内容
+
+input{
+  stdin {
+   codec => multiline {
+    pattern => "^\s"
+    what => "previous"
+    }
+  }
+}
+
+output {
+ stdout {
+  codec => rubydebug
+  }
+}
+
+
+
+匹配以斜杠结尾
+
+input{
+  stdin {
+   codec => multiline {
+    pattern => "\\$"
+    what => "next"
+    }
+  }
+}
+
+output {
+ stdout {
+  codec => rubydebug
+  }
+}
+
+匹配是时间开通的行
+negate 不以时间开头的行 都归上一行
+
+
+input{
+  stdin {
+   codec => multiline {
+    pattern => "^/[%{TIMESTAMP_ISO8601}\]"
+    negate => true
+    what => "previous"
+    }
+  }
+}
+
+output {
+ stdout {
+  codec => rubydebug
+  }
+}
+
+

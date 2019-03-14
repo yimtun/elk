@@ -1,0 +1,7 @@
+wget -P /opt https://artifacts.elastic.co/downloads/kibana/kibana-6.5.4-linux-x86_64.tar.gz
+
+screen -dmS  kibana
+
+screen -r    kibana
+
+/opt/kibana-6.5.4-linux-x86_64/bin/kibana -e http://10.255.128.33:9200 -H 10.255.128.33 -p 5601

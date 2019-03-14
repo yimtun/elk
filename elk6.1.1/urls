@@ -1,0 +1,5 @@
+https://demo.elastic.co/app/kibana#/dashboard/19e7fae0-92a6-11e8-8fa2-3d5f811fbd0f
+
+/opt/elasticsearch-6.1.1/bin/elasticsearch-plugin install ingest-geoip
+
+/opt/elasticsearch-6.1.1/bin/elasticsearch-plugin install ingest-user-agent

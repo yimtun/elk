@@ -1,0 +1,15 @@
+queue 分类
+
+in memory 
+宕机 数据丢失
+
+persistent queue in disk
+
+
+queue.type:persisted
+-默认是 memory
+
+queue.max_bytes:4gb
+-队列存储最大数据量
+
+https://www.elastic.co/guide/en/logstash/6.5/persistent-queues.html

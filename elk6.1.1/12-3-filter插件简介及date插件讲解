@@ -1,0 +1,51 @@
+filter 是logstash功能强大的主要原因 它可以对 logstash event进行丰富的处理
+比如解析数据 删除字段 类型转换等等 常见filter插件如下：
+
+-date 日期解析
+-grok 正则匹配解析
+-dissect 分割符解析
+-mutate 对字段作处理 重命名 删除 替换
+-json 按照json 解析字段内容到指定字段中
+-geoip 增加地理位置数据
+-ruby 利用ruby 代码来动态修改 logstash event 
+
+
+date
+将日期字符串解析为日期类型 然后替换 @timestamp 字段或指定的其他字段
+
+filter {
+ date {
+   match => ["logdate","MMM dd yyyy HH:mm:ss"]
+   }
+}
+
+{
+"logdate": "Jan 01 2018 12:02:08"
+}
+
+
+时区差异
+
+date 插件参数
+
+match 
+-类型为数组 用于指定日期匹配的格式 可以一次指定多种日志格式
+match => ["logdate","MMM dd yyyy HH:mm:ss","MMM d yyyy HH:mm:ss","ISO8601"]
+
+target 
+-类型为字符串 用于指定赋值的字段名 默认是 @timestamp
+
+timezone 
+-类型为字符串 用于指定时区 
+
+
+
+
+
+
+
+
+
+
+
+
