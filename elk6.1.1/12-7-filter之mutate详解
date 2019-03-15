@@ -1,0 +1,324 @@
+mutate 使用最频繁的操作 可以对字段进行各种操作 比如
+重命名 删除 替换 更新等 主要操作如下
+
+convert 类型转换
+gsub  字符串替换
+split/join/merge 字符串切割 数组合并为字符串 数组合并为数组
+rename 字段重命名
+update/replace 字段内容更新或替换
+remove_field 删除字段
+
+
+convert 实现字段类型转换 类型为hash 仅支持转换为 integet float string 和Boolean
+
+filter{
+ mutate {
+  convert => {"age" => "integer"}
+  }
+}
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+mutate {
+  convert => {"message" => "integer"}
+  }
+
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+123
+
+{
+       "message" => 123,
+    "@timestamp" => 2019-03-15T06:51:08.915Z,
+          "host" => "10.212.134.96",
+      "@version" => "1"
+}
+
+
+
+
+
+gsub 对字段内容进行替换 类型为数组 每3项为一个替换配置
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+mutate {gsub => ["message","/","_"]}
+
+
+mutate{remove_field => "headers"}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+mutate {
+  gsub => [
+   "path","/","_",
+   "urlparams","[//?#-]","."
+]
+}
+
+path 中的  /  转换成 _
+urlparams 中的  // ? # = 替换为 .
+
+a/b/c
+
+{
+       "message" => "a_b_c",
+    "@timestamp" => 2019-03-15T07:03:18.028Z,
+          "host" => "10.212.134.96",
+      "@version" => "1"
+}
+
+
+
+
+
+
+split 将字符串切割为数组
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+mutate {gsub => ["message","/","_"]}
+mutate {split => {"message"=>"_"}}
+
+
+mutate{remove_field => "headers"}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+a/b/c
+
+
+{
+       "message" => [
+        [0] "a",
+        [1] "b",
+        [2] "c"
+    ],
+    "@timestamp" => 2019-03-15T07:08:37.633Z,
+          "host" => "10.212.134.96",
+      "@version" => "1"
+}
+
+
+
+
+
+join 将数组拼接为字符串
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+mutate {gsub => ["message","/","_"]}
+mutate {split => {"message"=>"_"}}
+mutate {join => {"message"=>","}}
+
+mutate{remove_field => "headers"}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+a/b/c
+
+{
+       "message" => "a,b,c",
+    "@timestamp" => 2019-03-15T07:11:15.727Z,
+          "host" => "10.212.134.96",
+      "@version" => "1"
+}
+
+
+
+merge 将两个数组合并为1个数组 字符串
+会被转换为1个元素的数组 进行操作
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate {merge => {"b"=>"a"}}
+
+mutate{remove_field => "headers"}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+hi - hello - 123
+
+{
+      "@version" => "1",
+       "message" => "hi - hello - 123",
+    "@timestamp" => 2019-03-15T07:16:12.410Z,
+          "host" => "10.212.134.96",
+             "a" => "hi",
+             "b" => [
+        [0] "hello",
+        [1] "hi"
+    ],
+             "c" => "123"
+}
+
+a 合并到 b
+
+
+
+
+rename  修改字段名字
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate {merge => {"b"=>"a"}}
+mutate {rename => {"b"=>"d"}}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+hi  - hello - 123
+
+{
+      "@version" => "1",
+       "message" => "hi - hello - 123",
+    "@timestamp" => 2019-03-15T07:18:51.382Z,
+          "host" => "10.212.134.96",
+             "a" => "hi",
+             "c" => "123",
+             "d" => [
+        [0] "hello",
+        [1] "hi"
+    ]
+}
+
+
+
+
+update replace 修改字段内容  update 字段存在才生效 replace 字段不存在会增加字段
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate {update => {"a"=>"source form c:%{c}"}}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+hi - hello - 123
+
+{
+      "@version" => "1",
+       "message" => "hi - hello - 123",
+    "@timestamp" => 2019-03-15T07:23:13.135Z,
+          "host" => "10.212.134.96",
+             "a" => "source form c:123",
+             "b" => "hello",
+             "c" => "123"
+}
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate {update => {"e"=>"source form c:%{c}"}}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+hi - hello - 123
+
+{
+      "@version" => "1",
+       "message" => "hi - hello - 123",
+    "@timestamp" => 2019-03-15T07:24:16.495Z,
+          "host" => "10.212.134.96",
+             "a" => "hi",
+             "b" => "hello",
+             "c" => "123"
+}
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate {replace => {"e"=>"source form c:%{c}"}}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+hi - hello - 123
+
+
+{
+             "e" => "source form c:123",
+      "@version" => "1",
+       "message" => "hi - hello - 123",
+    "@timestamp" => 2019-03-15T07:24:56.263Z,
+          "host" => "10.212.134.96",
+             "a" => "hi",
+             "b" => "hello",
+             "c" => "123"
+}
+
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+mutate{remove_field => "message"}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+hi - hello - 123 
+
+
+{
+      "@version" => "1",
+    "@timestamp" => 2019-03-15T07:29:07.768Z,
+          "host" => "10.212.134.96",
+             "a" => "hi",
+             "b" => "hello",
+             "c" => "123"
+}

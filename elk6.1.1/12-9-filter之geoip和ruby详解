@@ -1,0 +1,107 @@
+geoip 根据地质提供对应的地域信息 
+经纬度 城市名 方便进行地理数据分析
+
+
+filter {
+ geoip{
+  source=>"ip"
+  }
+}
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+geoip{source => "message"}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+42.84.47.187
+
+
+
+
+
+
+{
+      "@version" => "1",
+       "message" => "42.84.47.187",
+    "@timestamp" => 2019-03-15T07:50:25.934Z,
+         "geoip" => {
+             "city_name" => "Shenyang",
+              "location" => {
+            "lon" => 123.4328,
+            "lat" => 41.7922
+        },
+           "region_name" => "Liaoning",
+             "longitude" => 123.4328,
+          "country_name" => "China",
+              "latitude" => 41.7922,
+        "continent_code" => "AS",
+         "country_code3" => "CN",
+           "region_code" => "21",
+                    "ip" => "42.84.47.187",
+              "timezone" => "Asia/Shanghai",
+         "country_code2" => "CN"
+    },
+          "host" => "10.212.134.96"
+}
+
+
+
+
+灵活的插件  ruby
+
+ruby 语言来随心所欲修改 logstash event对象
+
+filter {
+ ruby{
+   code => 'size = event.get("description").size;
+        event.set("description_size",size)'
+}
+}
+
+
+添加一个字段  description_size
+字段值 是字符串的长度
+
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+ruby{
+   code => 'size = event.get("message").size;
+        event.set("message_size",size)'
+}
+
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+
+{
+    "message_size" => 25,
+        "@version" => "1",
+         "message" => "wo ai bei jig tian an men",
+      "@timestamp" => 2019-03-15T07:56:05.600Z,
+            "host" => "10.212.134.96"
+}
+
+
+
+
+
+
+
+
+
+
+

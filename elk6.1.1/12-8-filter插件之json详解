@@ -1,0 +1,81 @@
+将字段内容为json格式的数据 进行解析
+
+如果字段里面有一个值 它的实际内容就是一个json的字符串
+把这个json字符串的每一个字段都解析出来
+
+source 指定哪一个字段里面是json
+
+target 要把解析出来的 字段放到 哪一个字段里面 如果不指定 
+直接把json解析出来的字段放到 root 级别 也就是 跟级别的
+否则就把解析出来的字段放到 target 里面
+
+
+filter {
+ json {
+  source => "message"
+  target => "msg_json"
+  }
+}
+
+source 要解析的字段名
+target 解析后的存储字段 默认和message同级别
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+json{source => "message"}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+
+
+body other
+{"job":"worker"}
+
+
+{
+           "job" => "worker",
+      "@version" => "1",
+       "message" => "{\"job\":\"worker\"}",
+    "@timestamp" => 2019-03-15T07:43:49.107Z,
+          "host" => "10.212.134.96",
+             "a" => "",
+             "b" => "",
+             "c" => "{\"job\":\"worker\"}"
+}
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+dissect{mapping => {"message" => "%{a} - %{b} - %{c}" }}
+json{source => "message" target=>"msg_json"}
+mutate{remove_field => "headers"}}
+output{stdout{codec=>rubydebug}
+}
+EOF
+
+GET
+body other
+
+{"job":"worker"}
+
+
+{
+      "msg_json" => {
+        "job" => "worker"
+    },
+      "@version" => "1",
+       "message" => "{\"job\":\"worker\"}",
+    "@timestamp" => 2019-03-15T07:45:49.052Z,
+          "host" => "10.212.134.96",
+             "a" => "",
+             "b" => "",
+             "c" => "{\"job\":\"worker\"}"
+}

@@ -1,0 +1,53 @@
+负责将 logstash  event 输出 常见插件如下
+
+stdout
+file
+elasticsearch
+
+
+output{
+ stdout{
+   codec => rubydebug
+   }
+}
+
+
+
+output{
+ file{
+   path => "/var/log/web.log"
+   codec => line{format => "%{message}"}
+  }
+}
+
+默认输出json格式的数据 通过 format 可以输出原始数据
+借用原始   message 格式
+
+
+
+output{
+ elasticsearch{
+   hosts => ["127.0.0.1:9200","127.0.0.2:9200"]
+   index => "nginx-%{+YYYY.MM.dd}"
+   template => "./nginx_template.json"
+   template_name => "nginx_template"
+   template_overwrite => true
+   }
+ }
+
+
+ hosts  不写 master node
+
+
+
+
+
+
+
+
+
+
+
+
+
+

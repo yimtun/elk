@@ -1,0 +1,307 @@
+dissect 
+基于分隔符原理解析数据 解决 grok 解析时消耗过多cpu资源的问题
+
+dissect 的应用有一定的局限性
+主要适用于每行给相似 且分隔符明确的简单场景
+
+dissect 语法比较简单 有一系列字段 field 和分隔符 delimiter 组成
+
+- %{}  字段
+- %{}   之间是分隔符
+
+Apr 26 12:20:02 localhost systemd[1]: Starting system activity accounting tool...
+
+filter {
+ dissect{
+  mapping => {"message" => "%{ts} %{+ts} %{+ts} %{src} %{prog}[%{pid}]: %{msg}" }
+  }
+}
+
+
+
+
+{
+           "msg" => "Starting system activity accounting tool...",
+      "@version" => "1",
+           "src" => "localhost",
+       "message" => "Apr 26 12:20:02 localhost systemd[1]: Starting system activity accounting tool...",
+    "@timestamp" => 2019-03-15T06:05:14.195Z,
+            "ts" => "Apr 26 12:20:02",
+          "host" => "10.212.134.96",
+          "prog" => "systemd",
+           "pid" => "1"
+}
+
+
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{ts} %{+ts} %{+ts} %{src} %{prog}[%{pid}]: %{msg}" }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+
+dissect 匹配语法
+
+hi - hello - 12
+%{a} - %{b} -%{c}
+
+如果不写 名称即 %{}  表明忽略该值
+
+{
+"a":"hi",
+"b":"hello",
+"c":"12"
+}
+
+
+
+a  字段名
+hi 字段值 
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{a} - %{b} - %{c}" }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+hi - hello - 12
+
+
+
+
+
+
+
++号代表该匹配值追加到ts字段下
+
+%{ts}%{+ts}%{+ts}
+Apr 26 12:20:02
+
+{
+"ts" "Apr 26 12:20:02"
+}
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{ts} %{+ts} %{+ts}" }
+    }
+
+mutate{
+    
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+
+/后面的数字代表拼接次序
+
+two three one go
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{+order/2} %{+order/3} %{+order/1} %{+order/4}" }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+{
+         "order" => "one two three go",
+      "@version" => "1",
+       "message" => "two three one go",
+    "@timestamp" => 2019-03-15T06:18:51.477Z,
+          "host" => "10.212.134.96"
+}
+
+
+
+
+
+
+
+
+
+
+
+url 参数中 a=1&b=2 有很多这种形式
+
+%{?key1}=%{&key1}&%{?key2}=%{&key2}
+
+%{?} 代表忽略匹配值，但是赋予字段名，
+用于后续匹配
+
+%{&} 代表将匹配值赋予key1 的匹配值
+
+{
+"a":"1",
+"b":"2"
+}
+
+=   这里是分隔符
+&   这里是分隔符
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{?key1}=%{&key1}&%{?key2}=%{&key2}" }
+    }
+
+mutate{
+    
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+a=1&b=2
+
+
+
+dissect 可以自动处理空的匹配值
+
+John Smith,Big Oaks,Wood Lane,Hambledown,Canterbury,CB34RY
+
+%{name},%{addr1},%{addr2},%{addr3},%{city},%{zip}
+
+Jane Doe,4321 Fifth Avenue,,,New York,87432
+
+
+cat > /opt/logstash-6.1.1/demo.conf << EOF
+input{http{port=>7474}}
+filter{
+
+dissect{
+    mapping => {"message" => "%{name},%{addr1},%{addr2},%{addr3},%{city},%{zip}" }
+    }
+
+mutate{
+    
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+{
+         "addr1" => "Big Oaks",
+       "message" => "John Smith,Big Oaks,Wood Lane,Hambledown,Canterbury,CB34RY",
+    "@timestamp" => 2019-03-15T06:40:33.708Z,
+         "addr2" => "Wood Lane",
+          "city" => "Canterbury",
+      "@version" => "1",
+          "name" => "John Smith",
+           "zip" => "CB34RY",
+          "host" => "10.212.134.96",
+         "addr3" => "Hambledown"
+}
+
+
+{
+         "addr1" => "4321 Fifth Avenue",
+       "message" => "Jane Doe,4321 Fifth Avenue,,,New York,87432",
+    "@timestamp" => 2019-03-15T06:40:59.252Z,
+         "addr2" => "",
+          "city" => "New York",
+      "@version" => "1",
+          "name" => "Jane Doe",
+           "zip" => "87432",
+          "host" => "10.212.134.96",
+         "addr3" => ""
+}
+
+
+
+
+
+dissect 分割后的字段值都是字符串
+可以使用convert_datatype属性进行类型转换
+
+filter{
+ dissect{
+ convert_datatype => {
+  age => "int"
+  }
+ }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

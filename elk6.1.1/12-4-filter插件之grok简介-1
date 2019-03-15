@@ -2,7 +2,7 @@
 
 1正则表达式
 
-2 grok
+2 grok  带有名字的正则表达式的集合
 
 %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\]
 %{WORD:verb} %{DATA:request} HTTP/%{NUMBER:httpversion}"
@@ -10,7 +10,7 @@
 %{QS:referrer} %{QS:agent}
 
 
-IP
+IP(?:%{IPV6|{IPV4})
 HOSTNAME
 IPORHOST
 
@@ -19,13 +19,249 @@ https://github.com/logstash-plugins/logstash-patterns-core/blob/master/patterns/
 
 grok 语法
 -%{SYNTAX:SEMANTIC}
-SYNTAX 为grok pattern 名称 SEMANTIC 为赋值字符安名称
+
+SYNTAX 为grok pattern 名称 
+SEMANTIC 为赋值字符安名称
+
 %{NUMBER:duration} 可以匹配数值类型 但是grok 匹配出的内容那都是字符串类型
    可以通过在最后指定 int  或 float 类强制转换类型
 
 %{NUMBER:duration:float}
 
+常见pattern:
 
 https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter {
+# dissect {
+   #mapping => {"message"=> "%{ts} %{+ts} %{+ts} %{src} %{prog}[%{pid}]:%{msg}"}
+# }
+#mutate{
+# remove_field => "headers"
+#}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+/opt/logstash-6.1.1/bin/logstash -f /opt/logstash-6.1.1/demo.conf -r
+
+logstash 启动速度慢 
+热加载 配置文件 
+
+-r
+
+
+https://insomnia.rest/download/#windows
+https://github.com/getinsomnia/insomnia/releases/download/v6.3.2/Insomnia.Setup.6.3.2.exe
+
+
+insomnia
+GET 172.16.99.2:7474
+
+body :other
+abc 123  send
+
+
+{
+       "headers" => {
+         "request_method" => "GET",
+            "http_accept" => "*/*",
+           "http_version" => "HTTP/1.1",
+        "http_user_agent" => "insomnia/6.3.2",
+         "content_length" => "7",
+           "request_path" => "/:",
+            "request_uri" => "/:",
+              "http_host" => "172.16.99.2:7474"
+    },
+    "@timestamp" => 2019-03-15T02:16:00.172Z,
+      "@version" => "1",
+       "message" => "abc 123",
+          "host" => "10.212.134.96"
+}
+
+
+
+
+修改  demo.conf
+vim /opt/logstash-6.1.1/demo.conf
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter {
+# dissect {
+   #mapping => {"message"=> "%{ts} %{+ts} %{+ts} %{src} %{prog}[%{pid}]:%{msg}"}
+# }
+mutate{
+ remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+insomnia
+GET 172.16.99.2:7474
+body :other
+abc 123  send
+
+
+
+
+{
+    "@timestamp" => 2019-03-15T02:20:49.746Z,
+      "@version" => "1",
+       "message" => "abc 123",
+          "host" => "10.212.134.96"
+}
+
+
+
+
+
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter {
+  grok{
+    match => {
+       "message" => "%{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:timestamp}\] \"%{WORD:verb} %{DATA:request} HTTP/%{NUMBER:httpversion}\" %{NUMBER:response:int} (?:-|%{NUMBER:bytes:int}) %{QS:referrer} %{QS:agent}"
+
+}
+  }
+
+mutate{
+ remove_field => "headers"
+}
+
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+GET 172.16.99.2
+body
+other
+send
+
+
+144.23.4.1 - - [13/Mar/2016:02:38:26 -0400] "GET /fancy.html HTTP/1.1" 200 6146 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/ 20100101 Firefox/51.0"
+
+
+空格需要匹配
+
+
+{
+    "httpversion" => "1.1",
+           "auth" => "-",
+      "timestamp" => "13/Mar/2016:02:38:26 -0400",
+          "agent" => "\"Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/ 20100101 Firefox/51.0\"",
+        "message" => "144.23.4.1 - - [13/Mar/2016:02:38:26 -0400] \"GET /fancy.html HTTP/1.1\" 200 6146 \"-\" \"Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/ 20100101 Firefox/51.0\"",
+     "@timestamp" => 2019-03-15T03:34:08.159Z,
+           "verb" => "GET",
+        "request" => "/fancy.html",
+       "response" => 200,
+          "bytes" => 6146,
+       "referrer" => "\"-\"",
+       "@version" => "1",
+       "clientip" => "144.23.4.1",
+          "ident" => "-",
+           "host" => "10.212.134.96"
+}
+
+
+
+
+
+
+grok pattern 满足不了需求 
+基于正则自定义配置规则
+
+- (?<service_name>[0-9a-z]{10,11}
+10到11个包含字母数字组成的字符串
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter {
+  grok{
+  match=> {
+  "message" => "(?<service_name>[a-z0-9]{10,11})"
+  }
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+get 
+body other
+10 个字符
+abc123467w
+
+9个字符
+abc123467
+
+{
+      "@version" => "1",
+       "headers" => {
+         "request_method" => "GET",
+           "request_path" => "/:",
+            "http_accept" => "*/*",
+            "request_uri" => "/:",
+           "http_version" => "HTTP/1.1",
+        "http_user_agent" => "insomnia/6.3.2",
+              "http_host" => "172.16.99.2:7474",
+         "content_length" => "9"
+    },
+          "tags" => [
+不符合要求 failure        [0] "_grokparsefailure"
+    ],
+       "message" => "abc123467",
+    "@timestamp" => 2019-03-15T05:04:04.132Z,
+          "host" => "10.212.134.96"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
