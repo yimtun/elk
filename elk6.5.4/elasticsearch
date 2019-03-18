@@ -1,0 +1,148 @@
+tar xzvf  /opt/elasticsearch-6.5.4.tar.gz   -C /opt/
+
+chown  elasticsearch -R  /opt/elasticsearch-6.5.4
+
+sudo -u elasticsearch /opt/elasticsearch-6.5.4/bin/elasticsearch \
+-Ecluster.name=test1 -E node.name=test \
+-Ehttp.host=172.16.99.2 -Ehttp.port=9200 \
+-Epath.data=/tmp/test1  -v
+
+
+
+
+/opt/kibana-6.5.4-linux-x86_64/bin/kibana -e http://172.16.99.2:9200 -H 172.16.99.2 -p 5601
+
+
+tar zxvf packetbeat-6.5.4-linux-x86_64.tar.gz
+
+cd /opt/packetbeat-6.5.4-linux-x86_64/
+
+vim packetbeat.yml
+
+packetbeat.interfaces.device: eth0
+packetbeat.interfaces.type: af_packet
+packetbeat.interfaces.buffer_size_mb: 100
+
+- type: http
+  ports: [80, 8080, 8000, 5000, 8002]
+  send_request: true
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["172.16.99.2:9200"]
+
+setup.kibana:
+  host: "172.16.99.2:5601"
+
+./packetbeat setup --dashboards
+
+./packetbeat -e -c packetbeat.yml -d "publish"
+
+
+yum -y install mariadb-server
+
+systemctl  start mariadb
+grant all privileges on *.* to root@172.16.99.2 identified by'123456';
+
+172.16.99.2
+mysql -h172.16.99.3 -uroot -p'123456'
+use mysql;
+select * from user;
+
+
+
+yum -y install httpd
+
+systemctl  start httpd
+curl http://172.16.99.3/
+
+
+
+tar zxvf metricbeat-6.5.4-linux-x86_64.tar.gz
+
+/opt/metricbeat-6.5.4-linux-x86_64/metricbeat modules list
+
+vim /opt/metricbeat-6.5.4-linux-x86_64/metricbeat.yml
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["172.16.99.2:9200"]
+
+
+setup.kibana:
+  host: "172.16.99.2:5601"
+
+
+/opt/metricbeat-6.5.4-linux-x86_64/metricbeat  setup --dashboards
+
+
+chown root metricbeat.yml
+chown root modules.d/system.yml
+
+
+/opt/metricbeat-6.5.4-linux-x86_64/metricbeat modules enable mysql
+
+grant all privileges on *.* to root@127.0.0.1 identified by'123456';
+grant all privileges on *.* to root@localhost identified by'123456';
+
+
+vim /opt/metricbeat-6.5.4-linux-x86_64/modules.d/mysql.yml
+172.16.101.151
+hosts: ["root:@tcp(127.0.0.1:3306)/"]
+
+
+
+
+/opt/metricbeat-6.5.4-linux-x86_64/metricbeat modules  enable ceph
+
+
+
+
+ sudo ./metricbeat -e -c metricbeat.yml -d "publish"
+
+
+
+kibana  测试环境   收集测试环境数据
+
+packetbeat 
+
+packetbeat 抓包有两种
+-pcap  基于libpcap 实现 跨平台支持
+-af_packet 仅linux 基于内核映射的嗅探技术 性能更好
+
+
+测试环境 使用的   -af_packet
+
+
+172.16.99.2:5601
+
+dashbaoard 时间 选择 17-18
+dashboard search Host
+
+[Metricbeat System] Host overview
+[Metricbeat MySQL] Overview
+[Metricbeat System] Overview
+[Metricbeat System] Host overview
+
+[Packetbeat] MySQL performance
+[Metricbeat MySQL] Overview
+
+
+[Packetbeat] HTTP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
