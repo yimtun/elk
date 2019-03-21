@@ -64,6 +64,9 @@ EOF
 
 
 
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash-6.5.4/config/logstash.conf
+
 /opt/logstash-6.5.4/bin/logstash -f /opt/logstash-6.5.4/config/logstash.conf
 
 

@@ -1,0 +1,11 @@
+filebeat.prospectors:
+- type: stdin
+  fields: 
+    type: neutron-metadata-agent
+  fields_under_root: true
+
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"

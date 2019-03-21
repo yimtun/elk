@@ -1,0 +1,65 @@
+GET _cat/indices
+
+DELETE /access-2019.03.20
+
+
+curl  172.16.99.2
+
+kibana 出现一条数据
+
+关闭 redis
+
+产生5条数据
+
+curl  172.16.99.2
+
+curl  172.16.99.2
+
+curl  172.16.99.2
+
+curl  172.16.99.2
+
+curl  172.16.99.2
+
+filebeat  pipeline":{"clients":2,"events":{"active":5,"retry":1}}
+
+
+
+
+
+
+开启 redis  
+
+/usr/local/redis/bin/redis-server  /usr/local/redis/conf/redis.conf
+
+
+
+filebeat :{"clients":2,"events":{"active":0,"retry":5},"queue":{"acked":5}}},"regis
+
+"libbeat":{"config":{"module":{"running":0}},"pipeline":{"clients":2,"events":{"active":0}}},"registrar":{
+
+
+kibana 上出现数据
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
