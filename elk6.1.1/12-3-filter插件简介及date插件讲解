@@ -13,20 +13,24 @@ filter 是logstash功能强大的主要原因 它可以对 logstash event进行�
 date
 将日期字符串解析为日期类型 然后替换 @timestamp 字段或指定的其他字段
 
+cat > /opt/date.conf << EOF
+input{stdin{codec=>json}}
 filter {
  date {
    match => ["logdate","MMM dd yyyy HH:mm:ss"]
    }
 }
+output{stdout{codec=>rubydebug}}
+EOF
 
-{
-"logdate": "Jan 01 2018 12:02:08"
-}
+输入
+
+{"logdate": "Jan 01 2018 12:02:08"}
 
 
 时区差异
 
-date 插件参数
+date 插件参数  match  target  timezone 
 
 match 
 -类型为数组 用于指定日期匹配的格式 可以一次指定多种日志格式
