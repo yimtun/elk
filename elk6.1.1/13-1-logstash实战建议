@@ -68,7 +68,7 @@ EOF
 
 
 
-输出metadata 内容
+输出metadata 内容   开关   metadata=>true
 
 cat > /opt/logstash-6.1.1/demo.conf << EOF
 input{http{port=>7474}}
@@ -112,8 +112,7 @@ EOF
 
 
 
-关掉 debug
-
+关掉 debug  注释   #add_field => {"[@metadata][debug]" => true}   就会走 else 打印很多点
 
 cat > /opt/logstash-6.1.1/demo.conf << EOF
 input{http{port=>7474}}

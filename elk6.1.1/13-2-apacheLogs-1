@@ -1,1 +1,40 @@
-dgfsd
+收集 apache 日志
+
+%{NOTSPACE:request}
+匹配非空格
+
+
+DATA 匹配任意字符 使用非贪婪模式
+%{DATA；rawerquest}
+
+%{QS:agent}
+带引号的内容
+
+
+日志里面的时间 赋值  @timestamp
+
+保留一份日志写入ES 的时间   或者说
+
+filebeat 读入日志的时间
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

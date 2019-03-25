@@ -12,6 +12,7 @@ filter 是logstash功能强大的主要原因 它可以对 logstash event进行�
 
 date
 将日期字符串解析为日期类型 然后替换 @timestamp 字段或指定的其他字段
+@timestamp 是 logstash  event 默认的时间字段
 
 cat > /opt/date.conf << EOF
 input{stdin{codec=>json}}
