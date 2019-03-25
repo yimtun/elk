@@ -1,0 +1,9 @@
+geoip
+
+metadata
+
+filter {
+ 
+mutate{add_field=>{"[metadata][debug]"=true}}
+
+
