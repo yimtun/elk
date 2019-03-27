@@ -1,0 +1,19 @@
+cat >  /opt/neutron-dhcp-agent.yml  <<  EOF
+filebeat.prospectors:
+- type: stdin
+  fields: 
+    type: neutron-dhcp-agent
+  fields_under_root: true
+
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"
+EOF
+
+
+
+
+
+/opt/filebeat-6.5.4-linux-x86_64/filebeat -e -c /opt/neutron-dhcp-agent.yml -d "publish"

@@ -1,0 +1,5 @@
+tail -n 1 /var/log/neutron/dhcp-agent.log 
+2019-03-08 13:03:06.940 15641 INFO neutron.agent.dhcp.agent [req-5262af37-7bf0-4bec-b5a1-a09cf341e3aa - - - - -] Trigger reload_allocations for port admin_state_up=True, allowed_address_pairs=[], binding:host_id=compute06, binding:profile=, binding:vif_details=port_filter=True, binding:vif_type=bridge, binding:vnic_type=normal, created_at=2019-02-03T13:29:32Z, description=, device_id=bbf5766d-5017-4091-a161-4ffaa52bada8, device_owner=compute:nova, extra_dhcp_opts=[], fixed_ips=[{u'subnet_id': u'3ce7d985-a57f-4649-8ddc-f6ce20a7a32b', u'ip_address': u'192.168.0.69'}], id=8c94c0c8-4312-463a-931f-b9450d497ee8, mac_address=fa:16:3e:b4:4f:05, name=, network_id=e7c1a9f8-4ee0-4b79-8d47-43e42caba343, port_security_enabled=True, project_id=f0a9483f0061490895b238e5d3c2f084, revision_number=27, security_groups=[u'b000f0d6-7b70-4ec6-a192-179f20cd3516'], status=DOWN, tags=[], tenant_id=f0a9483f0061490895b238e5d3c2f084, updated_at=2019-03-08T05:03:06Z
+
+
+
