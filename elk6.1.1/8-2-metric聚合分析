@@ -1,10 +1,726 @@
+
+
+写入测试数据
+
+
+DELETE test_search_index
+
+POST test_search_index/doc/_bulk
+{"index":{"_id":"1"}}
+{"username":"alfred way","job":"java engineer","age":18,"brith":"1990-01-02","isMarried":false}
+{"index":{"_id":"2"}}
+{"username":"alfred","job":"java senior engineer and java specialist","age":28,"birth":"1980-05-07","isMarried":true}
+{"index":{"_id":"3"}}
+{"username":"lee","job":"java and ruby engineer","age":22,"birth":"1985-08-07","isMarried":false}
+{"index":{"_id":"4"}}
+{"username":"alfred junior way","job":"ruby engineer","age":23,"birth":"1989-05-07","isMarried":false}
+
+
+
+
 metric 聚合分析
 主要分为如下两类：
+
+单值分析   多值分析
+
+
 -单值分析 只输出一个分析结果
 
 -min,max,avg,sum
 -cardinality   计算数目 distinc count 
 
+
 -多值分析，输出多个分析结果
 
--stats extended stats
+-stats extended stats    
+-percentile，percentile rank  百分位数
+-top hits 
+
+单值分析 之 Min 返回数值类型字段的最小值
+
+GET test_search_index/_search
+{
+ "size":0,  不需要返回文档列表  返回结果里面的hits就没有值
+ "aggs":{
+   "min_age":{
+     "min":{      aggs_type 关键词 
+       "filed":"age"   body 里指定指端名称
+       }
+    }
+ }
+}
+
+
+
+返回
+
+{
+"aggregations":{
+   "min_age":{
+        "value":18
+        }
+    }
+}
+
+
+
+
+实际测试
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "min_age": {
+      "min": {
+        "field": "age"
+      }
+    }
+  }
+}
+
+
+返回
+
+{
+  "took" : 1,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "min_age" : {
+      "value" : 18.0
+    }
+  }
+}
+
+
+
+
+
+
+一次聚合分析返回多个结果
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "min_age": {
+      "min": {
+        "field": "age"
+      }
+    },
+   
+    "max_age": {
+      "max": {
+        "field": "age"
+      }
+    },
+
+    "avg_age": {
+      "avg": {
+        "field": "age"
+      }
+    },
+
+   "sum_age": {
+      "sum": {
+        "field": "age"
+      }
+    }
+  }
+}
+
+
+
+
+Metric 聚合分析  Cardinality
+
+Cardinality 意为集合的势，或者基数 是指不同数值的个数 类似SQL 中的 distinct count 的概念
+也是单值类型
+
+计算不同数值的个数
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "count_of_job": {
+      "cardinality": {
+        "field": "job.keyword"
+      }
+    }
+  }
+}
+
+返回如下
+
+{
+  "took" : 3,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "count_of_job" : {
+      "value" : 4
+    }
+  }
+}
+
+
+
+多值分析 stats 返回一系列数值类型的统计值 min max avg sum count
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "stats_age": {
+      "stats": {
+        "field": "age"
+      }
+    }
+  }
+}
+
+
+{
+  "took" : 13,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "stats_age" : {
+      "count" : 4,
+      "min" : 18.0,
+      "max" : 28.0,
+      "avg" : 22.75,
+      "sum" : 91.0
+    }
+  }
+}
+
+
+
+多个返回值
+
+
+Metric 聚合分析  Extended Stats
+对stats的扩展 包含了更多的统计数据 如方差 标准差等
+
+
+DELETE test_search_index
+
+POST test_search_index/doc/_bulk
+{"index":{"_id":"1"}}
+{"username":"alfred way","job":"java engineer","age":18,"brith":"1990-01-02","isMarried":false,"salary":5000}
+{"index":{"_id":"2"}}
+{"username":"alfred","job":"java senior engineer and java specialist","age":28,"birth":"1980-05-07","isMarried":true,"salary":30000}
+{"index":{"_id":"3"}}
+{"username":"lee","job":"java and ruby engineer","age":22,"birth":"1985-08-07","isMarried":false,"salary":25000}
+{"index":{"_id":"4"}}
+{"username":"alfred junior way","job":"ruby engineer","age":23,"birth":"1989-05-07","isMarried":false,"salary":8000}
+
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "exstats_salary": {
+      "extended_stats": {
+        "field": "salary"
+      }
+    }
+  }
+}
+
+
+
+
+{
+  "took" : 2,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "exstats_salary" : {
+      "count" : 4,
+      "min" : 5000.0,
+      "max" : 30000.0,
+      "avg" : 17000.0,
+      "sum" : 68000.0,
+      "sum_of_squares" : 1.614E9,
+      "variance" : 1.145E8,
+      "std_deviation" : 10700.467279516348,
+      "std_deviation_bounds" : {
+        "upper" : 38400.9345590327,
+        "lower" : -4400.934559032696
+      }
+    }
+  }
+}
+
+
+
+Metric 聚合分析 Percentile 百分位统计
+
+
+
+GET test_search_index/_search
+{ 
+  "size": 0,
+  "aggs": {
+    "per_salary": { 
+      "percentiles": {
+        "field": "salary"
+      }
+    }
+  }
+}
+
+
+
+可以指定百分位数
+
+GET test_search_index/_search
+{ 
+  "size": 0,
+  "aggs": {
+    "per_salary": {
+      "percentiles": {
+        "field": "salary",
+        "percents": [
+          1,
+          5,
+          44.6,
+          50,
+          75,
+          95,
+          99
+        ]
+      }
+    }
+  }
+}
+
+
+
+
+
+
+了解当前数据的分布情况
+
+实际应用例子 统计 网站的响应时间数据的分布情况 kpi 请求响应时间%95 的 请求在200毫秒以内返回
+
+
+
+
+Metric 聚合分析 Percentile Rank 百分位数排名
+
+
+指定数值 查询 处于怎样的百分位
+
+
+GET test_search_index/_search
+{ 
+  "size": 0,
+  "aggs": {
+    "per_salary": {    
+      "percentile_ranks": {
+        "field": "salary",
+        "values": [ 
+        5000,
+        30000
+        ]
+      }
+    }
+  }
+}
+
+
+
+Metric 聚合分析 Top Hits
+一般用于分桶后 获取该桶内 最匹配的顶部文档列表 即详情数据
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "top_employee": {
+          "top_hits": {
+            "size": 10,
+            "sort": [
+              {
+                "age": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+terms   分桶聚合   
+
+根据 job 分桶 获取 
+
+下面的 aggs 是在 jobs 里面 第二个aggs 是一个子查询
+
+
+
+
+
+
+返回试下 jobs  分桶 buckets
+
+
+{
+  "took" : 7,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "jobs" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 0,
+      "buckets" : [
+        {
+          "key" : "java and ruby engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "3",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "lee",
+                    "job" : "java and ruby engineer",
+                    "age" : 22,
+                    "birth" : "1985-08-07",
+                    "isMarried" : false,
+                    "salary" : 25000
+                  },
+                  "sort" : [
+                    22
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "java engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "1",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred way",
+                    "job" : "java engineer",
+                    "age" : 18,
+                    "brith" : "1990-01-02",
+                    "isMarried" : false,
+                    "salary" : 5000
+                  },
+                  "sort" : [
+                    18
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "java senior engineer and java specialist",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "2",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred",
+                    "job" : "java senior engineer and java specialist",
+                    "age" : 28,
+                    "birth" : "1980-05-07",
+                    "isMarried" : true,
+                    "salary" : 30000
+                  },
+                  "sort" : [
+                    28
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "ruby engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "4",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred junior way",
+                    "job" : "ruby engineer",
+                    "age" : 23,
+                    "birth" : "1989-05-07",
+                    "isMarried" : false,
+                    "salary" : 8000
+                  },
+                  "sort" : [
+                    23
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+top  hits 应用  在业务开发的时候 希望获取到 term 这个分桶的统计结果 之外 还行拿到每个桶里的详情数据 
+
+kibana 折叠返回代码查看 清晰的分了几个桶
+
+
+{
+  "took" : 7,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "jobs" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 0,
+      "buckets" : [
+        {
+          "key" : "java and ruby engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "3",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "lee",
+                    "job" : "java and ruby engineer",
+                    "age" : 22,
+                    "birth" : "1985-08-07",
+                    "isMarried" : false,
+                    "salary" : 25000
+                  },
+                  "sort" : [
+                    22
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "java engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "1",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred way",
+                    "job" : "java engineer",
+                    "age" : 18,
+                    "brith" : "1990-01-02",
+                    "isMarried" : false,
+                    "salary" : 5000
+                  },
+                  "sort" : [
+                    18
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "java senior engineer and java specialist",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "2",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred",
+                    "job" : "java senior engineer and java specialist",
+                    "age" : 28,
+                    "birth" : "1980-05-07",
+                    "isMarried" : true,
+                    "salary" : 30000
+                  },
+                  "sort" : [
+                    28
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "key" : "ruby engineer",
+          "doc_count" : 1,
+          "top_employee" : {
+            "hits" : {
+              "total" : 1,
+              "max_score" : null,
+              "hits" : [
+                {
+                  "_index" : "test_search_index",
+                  "_type" : "doc",
+                  "_id" : "4",
+                  "_score" : null,
+                  "_source" : {
+                    "username" : "alfred junior way",
+                    "job" : "ruby engineer",
+                    "age" : 23,
+                    "birth" : "1989-05-07",
+                    "isMarried" : false,
+                    "salary" : 8000
+                  },
+                  "sort" : [
+                    23
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

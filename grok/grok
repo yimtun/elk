@@ -40,4 +40,10 @@
 (?<action>(([\s\S]*)))
 
 匹配所有内容
+((([\s\S]*)))
 
+
+
+%{GREEDYDATA:http_referrer}
+
+\[(?<req>(([\s\S]*)))\]   中括号内所有内容

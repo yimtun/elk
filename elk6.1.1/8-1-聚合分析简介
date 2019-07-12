@@ -2,8 +2,12 @@
 -请告诉我地址为上海的所有订单
 -请告诉我最近一天内创建但没有付款的所有订单
 
+搜索引擎回答 此类过滤 搜索问题的
+
+
+
 聚合分析可以回答如下问题：
--请告诉我最近1周每天的订单成交量是多少
+-请告诉我最近1周每天的订单成交量是多少 
 -请告诉我最近1个月每天的平均订单金额是多少
 -请告诉我最近半年卖的最火的前五个商品是什么
 
@@ -14,8 +18,23 @@
 
 
 
+聚合分析示例    公司在职人员 岗位分布情况 
+
+
+
 聚合分析
+
+
+局和分析API
+
+
 聚合分析作为search的一部分 api如下所示：
+
+聚合分析的API 也是在search下面 关键词aggs
+适合query同级的关键词
+
+
+
 
 关键词 aggs 与 query 同级
 
@@ -35,11 +54,21 @@ GET test_search_index/_search
 }
 
 
+主要学习的是 aggregation_type  aggregation_body
+
+
+
+
+
+
 子查询  子聚合  和 aggregation_type 同级的
 
 可以包含多个局和分析
 
 
+聚合分析示例
+
+aggregation_type 是 term
 
 GET test_search_index/_search
 {
@@ -55,13 +84,37 @@ GET test_search_index/_search
 
 
 
+返回结果
 
-局和分析 分类
+aggregations  里面有自定义聚合名称
+
+里面有 bucket 是一个数组
+
+
+key
+doc_count
+
+
+
+
+
+
+
+ES 中聚合分析 分为4类
+
 es将聚合分析主要分为如下4类：
--bucket 分桶型 类似SQL 中的group by 语法
--metric 指标分析类型 如计算最大值 最小值 平均值
--pipeline 管道分析类型 基于上一级的聚合分析结果进行再分析
--matrix    矩阵分析类型
+
+-bucket   分桶型 类似SQL 中的group by 语法  有很多不同的分桶的计算方法
+-metric   指标分析类型 如计算最大值 最小值 平均值
+-pipeline 管道分析类型  基于上一级的聚合分析结果进行再分析  比如通过metric类型得到当月每天的平均订单金额
+          但是还希望获得 平均每天订单金额里的最大值是哪一个
+
+-matrix   矩阵分析类型  热力图 多个维度的聚合分析
+
+
+
+
+
 
 
 

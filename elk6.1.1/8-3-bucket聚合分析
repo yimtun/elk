@@ -1,0 +1,431 @@
+bucket 聚合分析 
+
+bucket 桶 安装一定的规则将文档分配到不同的 桶中 达到分类分析的目的
+
+
+下面三个桶又不同的规则
+
+第1个桶  age < 10
+第2个桶  10 >= age < 30
+第3个桶  age >= 30
+
+
+安装bucket的分桶策略 常见的bucket 聚合分析如下几类
+
+
+Terms
+Range
+Data Range
+Histogram
+Data Histogram
+
+
+
+
+Term   该分桶策略最简单 直接安装term来分桶 如果是text类型 则按照分词后的结果分桶
+
+term 就是分词后  每一个词语 每一个term
+
+
+DELETE test_search_index
+
+POST test_search_index/doc/_bulk
+{"index":{"_id":"1"}}
+{"username":"alfred way","job":"java engineer","age":18,"brith":"1990-01-02","isMarried":false,"salary":5000}
+{"index":{"_id":"2"}}
+{"username":"alfred","job":"java senior engineer and java specialist","age":28,"birth":"1980-05-07","isMarried":true,"salary":30000}
+{"index":{"_id":"3"}}
+{"username":"lee","job":"java and ruby engineer","age":22,"birth":"1985-08-07","isMarried":false,"salary":25000}
+{"index":{"_id":"4"}}
+{"username":"alfred junior way","job":"ruby engineer","age":23,"birth":"1989-05-07","isMarried":false,"salary":8000}
+
+
+
+
+terms aggs type 
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword",
+        "size": 5
+      }
+    }
+  }
+}
+
+
+job.keyword keyword 不分词 输入的是什么 输出的 term 就是什么
+
+
+返回的数据都在  buckets 里面
+
+
+job 是一个text类型  会按照空格分词
+field 改为job
+
+GET test_search_index/_search
+{ 
+  "size": 0,
+  "aggs": { 
+    "jobs": {
+      "terms": { 
+        "field": "job",
+        "size": 5
+      }
+    }
+  }
+}
+
+
+报错
+
+Fielddata is disabled on text fields by default. Set fielddata=true on [job] in order to load fielddata 
+in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead."
+
+
+
+开启测试成功示例
+
+```
+PUT my_index
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "my_field": { 
+          "type": "text",
+          "fields": {
+            "keyword": { 
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+PUT my_index/_mapping/_doc
+{
+  "properties": {
+    "my_field": { 
+      "type":     "text",
+      "fielddata": true
+    }
+  }
+}
+``` 
+
+
+
+
+创建自定义mapping 设置 fielddata true
+
+
+```
+DELETE test_search_index
+PUT test_search_index
+{
+"mappings" : {
+      "doc" : {
+        "properties" : {
+          "age" : {
+            "type" : "long"
+          },
+          "birth" : {
+            "type" : "date"
+          },
+          "brith" : {
+            "type" : "date"
+          },
+          "isMarried" : {
+            "type" : "boolean"
+          },
+          "job" : {
+            "type" : "text",
+            "fielddata": true,
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "salary" : {
+            "type" : "long"
+          },
+          "username" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+```
+
+
+再次执行
+
+
+```
+GET test_search_index/_search
+{ 
+  "size": 0,
+  "aggs": { 
+    "jobs": {
+      "terms": { 
+        "field": "job",
+        "size": 5
+      }
+    }
+  }
+}
+```
+
+输出如下  按空格分词了  因为job 是一个text 类型 分词  针对text 类型   如果要做分桶的话  fielddata  true
+如何打开
+
+
+
+
+```
+{
+  "took" : 3,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 4,
+    "max_score" : 0.0,
+    "hits" : [ ]
+  },
+  "aggregations" : {
+    "jobs" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 1,
+      "buckets" : [
+        {
+          "key" : "engineer",
+          "doc_count" : 4
+        },
+        {
+          "key" : "java",
+          "doc_count" : 3
+        },
+        {
+          "key" : "and",
+          "doc_count" : 2
+        },
+        {
+          "key" : "ruby",
+          "doc_count" : 2
+        },
+        {
+          "key" : "senior",
+          "doc_count" : 1
+        }
+      ]
+    }
+  }
+}
+
+```
+
+
+打开
+
+
+faild
+
+curl -XPUT 'http://172.16.99.2:9200/test_search_index/_mapping/test_search_index' -d  '"properties": {"job": {"type": "text","fielddata": true}}}'
+
+
+
+
+bucket 聚合分析 Range
+
+按照数值范围设置分桶的规则
+
+
+DELETE test_search_index
+
+POST test_search_index/doc/_bulk
+{"index":{"_id":"1"}}
+{"username":"alfred way","job":"java engineer","age":18,"brith":"1990-01-02","isMarried":false,"salary":5000}
+{"index":{"_id":"2"}}
+{"username":"alfred","job":"java senior engineer and java specialist","age":28,"birth":"1980-05-07","isMarried":true,"salary":30000}
+{"index":{"_id":"3"}}
+{"username":"lee","job":"java and ruby engineer","age":22,"birth":"1985-08-07","isMarried":false,"salary":25000}
+{"index":{"_id":"4"}}
+{"username":"alfred junior way","job":"ruby engineer","age":23,"birth":"1989-05-07","isMarried":false,"salary":8000}
+
+
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "salary_range": {
+      "range": {
+        "field": "salary",
+        "ranges": [
+          {
+            "to": 10000
+          },
+          {
+            "from": 10000,
+            "to": 20000
+          },
+          {
+            "from": 20000
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+"key" : "*-10000.0",  返回的key  是es自动加的  也可以自己指定key 的名字
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "salary_range": {
+      "range": {
+        "field": "salary",
+        "ranges": [
+          {
+            "key":"<10000",
+            "to": 10000
+          },
+          {
+            "from": 10000,
+            "to": 20000
+          },
+          {
+            "from": 20000
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+
+bucket 聚合分析  data  range
+
+对日期做一个分桶的规则
+
+
+查看员工年龄的分布  出生日期的分布
+
+不指定日期格式 就是一个标准的日期格式
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "data_range": {
+      "range": {
+        "field": "birth",
+        "format":"yyyy",
+        "ranges": [
+          {
+            
+            "from": 1980,
+            "to":1990
+          },
+          {
+            "from": 1990,
+            "to": 2000
+          },
+          {
+            "from": 2000
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+
+Bucket 聚合分析  Historgram
+直方图 以固定间隔的策略来分割数据 
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "salary_list": {
+      "histogram": {
+        "field": "salary",
+        "interval": 5000,
+        "extended_bounds": {
+          "min": 0,
+          "max": 40000
+        }
+        
+      }
+    }
+  }
+}
+
+
+interval          间隔
+extended_bounds   数据范围
+
+
+
+
+
+
+bucket 聚合分析   data histogram
+针对日期的直方图或者柱状图 是时序数据分析中常用的局和分析类型
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "by_year": {
+      "date_histogram": {
+        "field": "birth",
+        "interval": "year",
+        "format": "yyyy"
+      }
+  }
+}
+}
+
+
+
+
+
