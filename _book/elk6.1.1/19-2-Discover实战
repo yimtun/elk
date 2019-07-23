@@ -1,55 +1,3 @@
-
-创建kibana  index 
-logstash-*
-
-
-Discover 选择 logstash-*   时间选择近五年
-
-
-左边
-0 hits 本次查询的总结果数
-
-右边  new  save open      查询条件 新建 保存 打开
-
-
-搜索框
-
-搜索中国
-
-2,550 hits
-
-geo.src.keyword:CN
-
-
-高级设置里打开    Query language
-
- discover 里查询语言的设置
-
-dev tools  kuery DSL
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 logstash-2015.05.18
 logstash-2015.05.18-id
 
@@ -93,32 +41,30 @@ add a filter
 machine.os  is win
 
 对号 是否应用这个条件 
-图钉 组其他页面 比如可视化页面   这个条件也会存在 
+图钉 组其他页面 这个条件也会存在 
 减号  取反
 删除
 编辑
 
 
 selected fields
-_source  文档原始内容 
-Time    时间戳字段 @timestamp    _source  文档原始内容
+_source 
+Time  时间戳字段 @timestamp    _source  文档原始内容
 
-available fields   设置图标
+available fields 
 快速过滤 是否可以聚合分析 yes   是否可搜索 yes Type number  reset 重新显示所有字段  
 
 
+popular 
 
-
-popular  常用字段 
-
-t message  txt  字符串类型   t 符号 
-#  number 类型               # number类型
+t message  txt  字符串类型
+#  number 类型
 表  时间类型
 地球 geoip 类型
 ? 数组类型
 
 
-@tags   点击 有统计信息  是一个 terms   点击  加号  执行查询条件  
+@tags
 kibana 500 条记录限定 
 分析字段 时  加号  减号 数据探索
 

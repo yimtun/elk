@@ -1,0 +1,22 @@
+input  thread
+
+pipeline workder thread
+
+相关配置
+
+pipeline.works | -w
+-pipeline 线程数 即 filter output 的处理线程 默认是cpu核心数
+
+pipeline.batch.size | -b
+batcher 一次批量获取人的待处理文档数 默认是125 可根据输出进行调整
+越大会占用越多的heap空间 可以通过jvm.options 调整
+
+pipeline.batch.delay | -u
+batcher 等待的时长 单位 ms
+
+https://visualvm.github.io/
+
+echo -e "foo\nbar"  | /opt/logstash-6.1.1/bin/logstash -f /opt/logstash-6.1.1/codec.conf  -w 2
+
+
+wget  -P /opt/ https://github.com/visualvm/visualvm.src/releases/download/1.4.2/visualvm_142.zip

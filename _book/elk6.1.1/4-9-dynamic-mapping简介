@@ -1,0 +1,87 @@
+es 可以自动识别文档字段类型 从而降低用户使用成本 如下所示
+
+DELETE test_index
+
+PUT test_index/doc/1
+{
+  "username":"alfred",
+  "age":1
+}
+
+
+GET test_index/_mapping
+
+
+{
+  "test_index": {
+    "mappings": {
+      "doc": {
+        "properties": {
+          "age": {
+            "type": "long"
+          },
+          "username": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+age       log 类型
+username  text 类型
+
+username 有一个fields 子字段
+这个子字段名字是keyword  类型是keyword 
+
+
+
+es 如何实现自动识别字段类型
+es 是依靠JSON 文档字段类型来实现的自动识别字段类型 支持的类型如下
+
+es  通过JSON类型推导出es 的数据类型
+
+JSON   到  es  类型映射关系
+
+nul        忽略
+boolean    boolean
+浮点类型   float
+整数       long
+object     object
+array      由第一个分null值的类型决定
+string     匹配为日期则设为date类型默认开启
+           匹配为数字 设为float 或者long类型 默认关闭
+           设为text类型 并附带keyword的子字段
+
+
+验证es自动识别推到类型
+
+
+
+DELETE test_index
+
+PUT test_index/doc/1
+{
+  "username":"alfred",
+  "age":14,
+  "birth":"1988-10-10",
+  "married":false,
+  "year":"18",
+  "tags":["boy","fashion"],
+  "money":100.1
+}
+
+GET test_index/_mapping
+
+
+
+
+

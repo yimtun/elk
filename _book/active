@@ -1,0 +1,114 @@
+收集elasticsearch 集群的查询语句  _search
+
+分析查询语句 的常用语句 响应时长
+
+
+方案 
+
+应用 packetbeat logstash 完成数据收集工作
+使用 kibana elasticsearch 完成数据分析工作
+
+
+###### mon
+
+
+启动分析数据的 elasticsearch  172.16.99.2
+
+
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ecluster.name=sniff_search -Ehttp.host=127.0.0.1 -Ehttp.port=8200 -Epath.data=/tmp/sniff -v
+/opt/kibana-5.6.3-linux-x86_64/bin/kibana -e http://127.0.0.1:8200  -H 172.16.99.2 -p 8601
+
+
+启动logstash
+
+cat > /opt/logstash-5.6.3/sniff_search.conf << EOF
+input {
+    beats {
+          port => 5044
+    }
+
+}
+
+filter {
+   if "search" in [request]  {
+       grok {
+         match => { "request" => ".*\n\{(?<query_body>.*)"}
+       }
+       
+       grok {
+         match => { "path" => "\/(?<index>.*)\/_search"}
+       }
+   
+   if [index] {
+    }  else {
+         mutate {
+           add_field => { "index" => "ALL" }
+       }
+    }
+   mutate {
+      update => { "query_body" => "{%{query_body}"}}
+    }
+}
+
+output {
+ if "search" in [request] {
+  elasticsearch {
+    hosts => "127.0.0.1:8200"
+     }
+  }
+}
+EOF
+
+
+/opt/logstash-5.6.3/bin/logstash -f /opt/logstash-5.6.3/sniff_search.conf
+
+
+
+http://172.16.99.2:8601
+
+
+dev tools
+get to work
+
+GET _cat/indices
+
+yellow open .kibana vV9gqPFJQByUoHtvgWgKRg 1 1 1 0 3.1kb 3.1kb
+
+
+
+#####  TARGET   172.16.99.3 
+
+
+启动收集日志目标集群  172.16.99.3 
+sudo  -u elasticsearch /opt/elasticsearch-5.6.3/bin/elasticsearch -Ecluster.name=target_search -Ehttp.host=127.0.0.1 -Ehttp.port=9200 -Epath.data=/tmp/target_search  -v
+
+/opt/kibana-5.6.3-linux-x86_64/bin/kibana -e http://127.0.0.1:9200 -H 172.16.99.3 -p 5601
+
+启动 packetbeat  发送数据给  172.16.99.2 5044 上的logstash
+
+cat >  /opt/packetbeat-5.6.3-linux-x86_64/sniff_search.yml  << EOF
+packetbeat.interfaces.device: lo
+packetbeat.protocols.http:
+   ports: [9200]
+   send_request: true
+   include_body_for: ["application/json", "x-www-form-urlencoded"]
+output.console:
+   pretty: true
+output.logstash:
+   hosts: ["172.16.99.2:5044"]
+EOF
+
+
+
+
+
+/opt/packetbeat-5.6.3-linux-x86_64/packetbeat  -e -c /opt/packetbeat-5.6.3-linux-x86_64/sniff_search.yml   -strict.perms=false
+
+http://172.16.99.3:5601
+
+
+dev tools
+get to work
+
+GET _cat/indices
+

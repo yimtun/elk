@@ -1,0 +1,32 @@
+2019-03-21 13:35:55.403 31184 INFO neutron.wsgi [-] 172.16.101.151 "OPTIONS / HTTP/1.0" status: 200  len: 251 time: 0.0030589
+
+%{TIMESTAMP_ISO8601:time} %{WORD:data} %{WORD:info} %{WORD:api_name}.%{WORD:api_dot} \[-\] %{IP:ip} \"%{WORD:t1} \/ %{WORD:protocl}\/1.0" %{WORD:stat}: %{NUMBER:code}\s %{WORD:t2}\: %{NUMBER:t3} %{WORD:t4}\: %{NUMBER:t5}
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:data} %{WORD:info} %{WORD:api_name}.%{WORD:api_dot} \[-\] %{IP:ip} \"%{WORD:t1} \/ %{WORD:protocl}\/1.0" %{WORD:stat}: %{NUMBER:code}\s %{WORD:t2}\: %{NUMBER:t3} %{WORD:t4}\: %{NUMBER:t5}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[-\] %{IP:ip} \"%{WORD:t1} \/ %{WORD:protocl}\/1.0" %{WORD:stat}: %{NUMBER:code}\s %{WORD:t2}\: %{NUMBER:t3} %{WORD:t4}\: %{NUMBER:t5}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \s*\S*\s*%{IP:clint_ip} \"%{WORD:t1} \/ %{WORD:protocl}\/1.0" %{WORD:stat}: %{NUMBER:code}\s %{WORD:t2}\: %{NUMBER:t3} %{WORD:t4}\: %{NUMBER:t5}
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \s*\S*\s* %{IP:clint_ip} %{QS:version}
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \s*\S*\s* %{IP:clint_ip} %{QS:version} \s*\S*\s* %{NUMBER:http_code}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \s*\S*\s* %{IP:clint_ip} %{QS:version} \s*\S*\s* %{NUMBER:http_code} \s*\S*\s* %{NUMBER:len}\s*\S*\s* %{NUMBER:time}
+
+
+
+
+
+
+
+

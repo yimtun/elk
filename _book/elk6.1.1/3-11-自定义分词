@@ -1,0 +1,184 @@
+自定义分词 api
+
+自定义分词需要在索引的配置中设定 如下所示
+
+PUT test_index
+{
+"settings":{
+"analysis":{
+"char_filter":{},
+"tokenizer":{},
+"filter":{},
+"analyzer":{}  引用自定义
+}
+}
+}
+
+
+
+自定义分词器如下图
+
+custom analyzer
+
+character filters:   html strip
+
+tokenizer:           standard
+
+token filters:       lowercase  ascii folding
+
+
+PUT test_index_1
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_custom_analyzer": {
+          "type": "custom",
+          "tokenizer":"standard",
+          "char_filter": [
+            "html_strip"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+POST  test_index_1/_analyze
+{
+"analyzer":"my_custom_analyzer",
+"text":"Is this <b>a box</b>?"
+}
+
+
+自定义分词器二
+
+custom analyzer
+
+character filters :   custom mapping  自定义mapping mapping是es自带的一个 character filter 
+                                    有一些参数可以自己配置
+
+tokenizer:            custom pattern   
+
+
+token filters:        lowercase custom stop
+
+
+
+PUT test_index_2
+{
+  "settings":{
+    "analysis":{
+      "analyzer":{
+        "my_custom_analyzer":{
+          "type":"custom",
+          "char_filter":[
+            "emoticons"
+            ],
+            "tokenizer":"punctuation",
+            "filter":[
+              "lowercase",
+              "english_stop"
+              ]
+        }
+      },
+      "tokenizer":{
+        "punctuation":{
+          "type":"pattern",
+          "pattern":"[ .,!?]"
+        }
+      },
+      "char_filter":{
+        "emoticons":{
+          "type":"mapping",
+          "mappings":[
+            ":) => _happy_",
+            ":( => _sad_"
+            ]
+        }
+      },
+      "filter":{
+        "english_stop":{
+        "type":"stop",
+        "stopwords":"_english_"
+        }
+        }
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+POST test_index_2/_analyze
+{
+  "analyzer": "my_custom_analyzer",
+  "text": "I'm a :) persion, and you"
+}
+
+
+
+{
+  "tokens": [
+    {
+      "token": "i'm",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "word",
+      "position": 0
+    },
+    {
+      "token": "_happy_",
+      "start_offset": 6,
+      "end_offset": 8,
+      "type": "word",
+      "position": 2
+    },
+    {
+      "token": "person",
+      "start_offset": 9,
+      "end_offset": 15,
+      "type": "word",
+      "position": 3
+    },
+    {
+      "token": "you",
+      "start_offset": 21,
+      "end_offset": 24,
+      "type": "word",
+      "position": 5
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

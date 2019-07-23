@@ -1,0 +1,244 @@
+允许根据es自动识别的 数据类型 字段名 等 来动态设定字段类型
+
+可以实现如下效果
+
+-所有字符串类型都设定为keyword类型 即默认不分词  
+es自动识别的字符串会识别为text 是分词的 而且都会加一个子字段 比较占用空间
+
+需要分词的字段单独再设置
+
+-所有以message开头的字段都设定为text类型 即分词
+
+-所有以long_ 开头的字段 都设定为long 类型
+
+-所有自动匹配为double类型的都设定为float类型 以节省空间
+
+
+在mapping  中具体的type 下面设置 dynamic templates
+
+本身是个数组 可以设置多个模板
+
+tempalte 名称
+匹配规则
+
+
+匹配规则一般有如下几个参数
+
+- match_mapping_type 匹配es自动识别的字段类型 如boolean long string 等
+- match,unmatch 匹配字段名
+- path_match, path_unmatch  匹配路径
+
+
+示例1
+
+字符串默认使用keyword类型
+
+-es默认会为字符串设置为text 型 并增加一个keyword子字段
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred"
+}
+
+GET test_index/_mapping
+
+
+DELETE test_index
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "dynamic_templates": [
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred"
+}
+
+
+GET test_index/_mapping
+
+
+
+示例2 以message 开头的字段都设置为text类型
+
+match 匹配字段名字
+
+dynamic_templates 默认顺序 由上到下的
+
+注意顺序
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred",
+  "message_xxx": "handsome boy"
+}
+
+GET test_index/_mapping
+
+
+
+
+
+
+DELETE test_index
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "dynamic_templates": [
+        {
+          "message_as_text": {
+            "match_mapping_type": "string",
+            "match": "message*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred",
+  "message_xxx": "handsome boy"
+}
+
+
+
+
+
+
+GET test_index/_mapping
+
+
+
+
+
+
+
+
+示例3  double 设定 默认为float 类型  节省空间
+
+有问题
+
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred",
+  "message_xxx": "handsome boy",
+  "money":1224.040965845735745835474674657
+}
+
+GET test_index/_mapping
+
+
+DELETE test_index
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "dynamic_templates": [
+        {
+          "message_as_text": {
+            "match_mapping_type": "string",
+            "match": "message*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double_as_float": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+PUT test_index/doc/1
+{
+  "name": "alfred",
+  "message_xxx": "handsome boy",
+  "money":1224.4622
+}
+
+
+
+
+
+
+GET test_index/_mapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+

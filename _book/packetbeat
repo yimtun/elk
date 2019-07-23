@@ -1,0 +1,48 @@
+packetbeat 简介
+实施抓取网络包
+
+自动解析应用层协议
+icmp
+dns
+http
+mysql
+redis
+....
+
+
+wireshark
+
+packetbeat 解析http 协议
+
+解析 elasticsearch http 请求
+
+packetbeat:interfaces.device:lo0
+packetbeat.protocols.http: ports:[9200]
+send_request:true
+include_body_for:["application/json","x-www-form-urlencoded"]
+output.console:
+pretty:true
+
+
+记录http 请求的 request 内容 send_request:true
+include_body_for  记录这两种格式的数据
+
+
+运行
+
+packetbeat -e -c es.yml -strict.perms=false
+
+strict.perms=false  不会检查配置文件权限
+
+
+
+
+
+
+
+
+
+
+
+
+

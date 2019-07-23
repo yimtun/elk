@@ -1,0 +1,166 @@
+pipeline 配置语法
+
+主要有如下数值类型：
+
+布尔类型 boolean
+- isFailed => true
+
+数值类型 number
+- port => 33
+
+字符串类型 string
+- name => "hello"
+
+数组 array list
+- users => [{id => 1,name => bob},{id =>2,name => tom}]
+- path => ["/var/log/messages","/var/log/*.log"]
+
+哈希类型 hash
+match => {
+  "field1" => "value1"
+  "field2" => "value2"
+}
+
+
+注释 #
+
+
+
+在pipeline的配置中 可以引用logstash event 的属性(字段)
+主要有以下两种方式
+-直接引用字段值
+-在字符串中以sprintf 方式引用
+
+
+直接引用 event  字段值  field reference
+使用 [] 即可 套嵌字段写多层[]即可
+
+if [request] =~ "index{
+
+if [ua][os] =~ "windows"{
+
+
+
+
+字符串中引用字段值 spritf
+使用 %{} 来实现
+
+
+{
+ "agent":"Mozilla/5.0 (compatible; MSIE 9.0)",
+ "ip":"192.168.56.78",
+ "request":"/index.html",
+ "response":{
+   "status":200,
+   "bytes":52353
+   },
+   "ua":{
+     "os":"Windows 7"
+     }
+}
+
+req => "request is %{request}"
+
+ua => "ua is %{[ua][os]}"
+
+
+
+
+
+
+
+pipeline配置语法支持 条件判断语法
+从而扩展了配置的多样性 主要格式如下
+
+if EXPRESSION {
+...
+} else if EXPRESSION {
+...
+} else {
+...
+}
+
+
+
+表达式主要包含如下的操作符
+- 比较 ==  !=  <   >  <=   >=
+-正则是否匹配  =~       !~
+
+-包含 字符串 或 数组  in    not in
+-布尔操作符 and   or   nand  xor !
+-分组操作符 ()
+
+
+
+if [action] == "login"{
+if [loglevel] == "ERROR" and [deployment] == "production" {
+if [foo] in [foobar] {
+if [foo] in "foo" {
+if "hello" in [greeting] {
+if [foo] in ["hello","world","foo"] {
+if !("foo" in ["hello","world"]) {
+if "_grokparsefailure" not in [tags] {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

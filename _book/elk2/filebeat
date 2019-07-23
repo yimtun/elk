@@ -1,0 +1,8 @@
+filebeat 运行
+
+./filebeat -e -c filebeat.yml -d "publish"
+
+e  输出到 stderr 默认输出到 syslog logs/fiebeat
+publish 输出 publish 相关的 debug 日志
+
+

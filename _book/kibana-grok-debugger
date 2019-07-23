@@ -1,0 +1,71 @@
+kibana dev tools
+
+Grok Debugger
+
+
+55.3.244.1 GET /index.html 15824 0.043
+
+
+Grok Pattern  不能有换行
+
+%{IP:client} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes} %{NUMBER:duration}
+
+
+{
+  "duration": "0.043",
+  "request": "/index.html",
+  "method": "GET",
+  "bytes": "15824",
+  "client": "55.3.244.1"
+}
+
+
+
+
+
+
+
+
+
+Jan  1 06:25:43 mailserver14 postfix/cleanup[21403]: BEF25A72965: message-id=<20130101142543.5828399CCAF@mailserver14.example.com>
+
+
+%{SYSLOGBASE} %{POSTFIX_QUEUEID:queue_id}: %{MSG:syslog_message}
+
+POSTFIX_QUEUEID [0-9A-F]{10,11}
+MSG message-id=<%{GREEDYDATA}>
+
+
+
+
+{
+  "pid": "21403",
+  "program": "postfix/cleanup",
+  "logsource": "mailserver14",
+  "syslog_message": "message-id=<20130101142543.5828399CCAF@mailserver14.example.com>",
+  "queue_id": "BEF25A72965",
+  "timestamp": "Jan  1 06:25:43"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

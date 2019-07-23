@@ -1,0 +1,209 @@
+es聚合分析默认作用范围是query的结果集，可以通过如下方式改变其作用范围:
+
+除了使用query 还可以使用下面三个方式 改变作用范围
+
+
+- filter
+- post_filter
+- global
+
+aggs 关键词和  query 是同级的
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "query": {
+    "match": {
+      "username": "alfred"
+    }
+  },
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+作用范围 filter  过滤效果 只为某一个聚合分析设定过滤条件 从而在不更改整体query语句的情况下
+修改了作用范围
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "jobs_salary_small": {
+      "filter": {
+        "range": {
+          "salary": {
+            "to": 10000
+          }
+        }
+      },
+      "aggs": {
+        "jobs": {
+          "terms": {
+            "field": "job.keyword"
+          }
+        }
+      }
+    },
+    "jobs": {
+      "terms": {
+        "field": "job.keyword"
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+作用范围 post filter
+作用于文档过滤 但在聚合分析之后
+
+
+不是改变聚合分析的作用范围 在聚合分析结束之后再去过滤文档
+
+
+使用场景 用户 筛选 query
+
+一条语句实现 
+
+
+GET test_search_index/_search
+{
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword"    }
+    }
+  },
+  "post_filter": {
+    "match":{
+      "job.keyword":"java engineer"
+    }
+  }
+}
+
+查看 hits 中文档列表
+
+{
+  "took" : 2,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 5,
+    "successful" : 5,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : 1,
+    "max_score" : 1.0,
+    "hits" : [
+      {
+        "_index" : "test_search_index",
+        "_type" : "doc",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : {
+          "username" : "alfred way",
+          "job" : "java engineer",
+          "age" : 18,
+          "brith" : "1990-01-02",
+          "isMarried" : false,
+          "salary" : 5000
+        }
+      }
+    ]
+  },
+  "aggregations" : {
+    "jobs" : {
+      "doc_count_error_upper_bound" : 0,
+      "sum_other_doc_count" : 0,
+      "buckets" : [
+        {
+          "key" : "java and ruby engineer",
+          "doc_count" : 1
+        },
+        {
+          "key" : "java engineer",
+          "doc_count" : 1
+        },
+        {
+          "key" : "java senior engineer and java specialist",
+          "doc_count" : 1
+        },
+        {
+          "key" : "ruby engineer",
+          "doc_count" : 1
+        }
+      ]
+    }
+  }
+}
+
+
+
+作用范围 global
+
+我是query过滤条件 基于全部文档进行分析
+
+
+
+GET test_search_index/_search
+{
+  "query": {
+    "match": {
+      "job.keyword": "java engineer"
+    }
+  },
+  "aggs": {
+    "java_avg_salary": {
+      "avg": {
+        "field": "salary"
+      }
+    },
+    "all": {
+      "global": {},
+      "aggs": {
+        "avg_slary": {
+          "avg": {
+            "field": "salary"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+global 整体和部分需要做对比的时候可以使用
+
+
+
+

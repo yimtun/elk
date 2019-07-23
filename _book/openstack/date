@@ -1,0 +1,42 @@
+cat >  /opt/logstash.conf  << EOF
+input {
+        redis {
+          host => '172.16.99.2'
+          port => 6379
+          key => "redis-key"
+          data_type => "list"
+
+   }
+}
+
+filter {
+    date {
+      match => ["create_at", "yyyy-MM-dd HH:mm:ss,SSS", "UNIX"]
+      target => "@timestamp"
+      locale => "cn"
+    }
+}
+
+output{
+  if [type] == "keystone" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "keystone-%{+YYYY.MM.dd}"
+    }
+  }
+}
+
+output {stdout {codec => rubydebug}}
+EOF
+
+
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash.conf  -r
+
+
+
+
+
+
+
+

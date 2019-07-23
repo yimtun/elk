@@ -1,0 +1,19 @@
+配置文件
+
+server.port:
+server.host:
+elasticsearch.url:
+存储在es 中 kibana 索引的名字
+
+elasticsearch.pingTimeout:
+elasticsearch.requestTimeout:
+
+
+kibana 线上部署的推荐架构
+
+专门部署一个 Coordinating Only ES Node  和 Kibana 在同一台机器上
+
+
+       Kibana                          ES  Cluster
+
+Coordinating Only ES Node     ES Node    ES Node     ES Node

@@ -1,0 +1,15 @@
+http://172.16.99.2:8601
+
+
+GET _cat/indices
+
+多了一个  logstash index
+
+yellow open logstash-2019.03.06 4BdqKt4ORsqEoqivGHtZgw 5 1 130 0 1.4mb 1.4mb
+yellow open .kibana             q92lN4XeTsmR4SVvfZy4pA 1 1   1 0 3.2kb 3.2kb
+
+
+
+查询 logstash  index
+
+GET logstash-2019.03.06/_search

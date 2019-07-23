@@ -1,0 +1,53 @@
+心跳检查 确认对方是否还存活
+
+heartbeat.monitors:
+-type: icmp
+ schedule: '*/5*****'
+ hosts: ["baidu.com"]
+-type: tcp
+ schedule: '@every 5s'
+ hosts: ["xxx.com"]
+-type: http
+ schedule: '@every 5s'
+ urls: ["http://xxx.com"]
+ check.response.status: 200
+
+ 
+
+ cd /opt/heartbeat-6.1.1-linux-x86_64/
+
+
+output.elasticsearch:
+     hosts: ["172.16.99.2:9200"]
+
+setup.kibana:
+  host: "172.16.99.2:5601"
+
+
+cd /opt/heartbeat-6.1.1-linux-x86_64
+./heartbeat  setup --dashboards
+
+
+注释原来的
+heartbeat.monitors:
+
+- type: icmp
+  schedule: '*/5 * * * * *'
+  hosts: ["baidu.com"]
+
+- type: tcp
+  schedule: '@every 5s'
+  hosts: ["imooc.com:80"]
+
+- type: http
+  schedule: '@every 5s'
+  urls: ["http://imooc.com"]
+  check.response.status: 200
+
+./heartbeat  -e -c heartbeat.yml  -d "publish"
+
+
+new  search
+heartbeat-*
+
+Heartbeat HTTP monitoring

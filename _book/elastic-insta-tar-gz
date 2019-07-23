@@ -1,0 +1,61 @@
+https://www.elastic.co/
+
+
+https://www.elastic.co/downloads/past-releases
+
+
+wget -P /opt/   https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.3.tar.gz
+tar xzvf  /opt/elasticsearch-5.6.3.tar.gz   -C /opt/
+
+
+yum -y install sudo
+
+useradd  elasticsearch -c user  -d /home/elasticsearch  -s /sbin/nologin
+chown elasticsearch:elasticsearch  -R  /opt/elasticsearch-5.6.3
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch  -v
+
+curl http://127.0.0.1:9200
+
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ehttp.host=172.16.99.2 -v
+
+
+多实例启动
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ehttp.port=8200 -Epath.data=node2 -v
+curl http://127.0.0.1:8200
+
+
+sudo  -u elasticsearch  /opt/elasticsearch-5.6.3/bin/elasticsearch   -Ehttp.port=7200 -Epath.data=node3 -v
+curl http://127.0.0.1:7200
+
+
+验证集群是否组建成功
+curl http://127.0.0.1:9200/_cat/nodes
+127.0.0.1 25 55 2 0.30 0.20 0.11 mdi - UDmjoDP
+127.0.0.1 26 55 5 0.30 0.20 0.11 mdi - axHOwHV
+127.0.0.1 25 55 5 0.30 0.20 0.11 mdi * 22D_Wsv
+
+
+curl http://127.0.0.1:9200/_cat/nodes?v
+ip        heap.percent ram.percent cpu load_1m load_5m load_15m node.role master name
+127.0.0.1           25          55   1    0.22    0.19     0.11 mdi       -      UDmjoDP
+127.0.0.1           26          55   1    0.22    0.19     0.11 mdi       -      axHOwHV
+127.0.0.1           26          55   1    0.22    0.19     0.11 mdi       *      22D_Wsv
+
+
+查看集群信息
+curl http://127.0.0.1:9200/_cluster/stats
+
+elasticsearch.yml
+
+cluster.name  集群名称 以此作为是否在同意集群得判断条件
+node.name     节点名称 以此作为集群中不同节点得区分条件
+network.host/http.port  网络地址和端口 用于http 和transport 服务使用
+path.data 数据存储地址
+path.log  日志存储地址
+
+
+network.host: 172.16.99.1
+
+curl  http://172.16.99.1:9200
+
+elasticsearch cluster

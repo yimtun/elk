@@ -1,0 +1,324 @@
+cat > /opt/demov1.yml << EOF
+filebeat.prospectors:
+- type: stdin
+
+output.console:
+    pretty: true
+    enabled: true
+EOF
+
+
+/opt/filebeat-6.5.4-linux-x86_64//filebeat -e -c   /opt/demov1.yml 
+
+
+/opt/filebeat-6.5.4-linux-x86_64//filebeat -e -c   /opt/demov1.yml  -d "publish"
+
+
+
+选取 目标日志的 一条文件   粘贴到标准输入
+
+head -n 1 /var/log/keystone/keystone.log
+2019-03-21 03:44:04.444 9798 INFO keystone.common.wsgi [-] OPTIONS http://controller01:35357/
+
+
+或者直接 管道 重定向
+
+
+head -n 1 /var/log/keystone/keystone.log | /opt/filebeat-6.5.4-linux-x86_64/filebeat -e -c   /opt/demov1.yml  -d "publish"
+
+
+
+{
+  "@timestamp": "2019-03-21T02:30:07.916Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.5.4"
+  },
+  "offset": 0,
+  "message": "2019-03-21 03:44:04.444 9798 INFO keystone.common.wsgi [-] OPTIONS http://controller01:35357/",
+  "prospector": {
+    "type": "stdin"
+  },
+  "input": {
+    "type": "stdin"
+  },
+  "beat": {
+    "name": "controller01",
+    "hostname": "controller01",
+    "version": "6.5.4"
+  },
+  "host": {
+    "name": "controller01"
+  },
+  "source": ""
+}
+
+
+
+
+
+logstash 联调
+
+
+cat > /opt/demov1.yml << EOF
+filebeat.prospectors:
+- type: stdin
+  fields:
+    type: keystone
+  fields_under_root: true
+
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"
+EOF
+
+
+/opt/filebeat-6.5.4-linux-x86_64/filebeat -e -c   /opt/demov1.yml  -d "publish"
+head -n 1 /var/log/keystone/keystone.log |  /opt/filebeat-6.5.4-linux-x86_64/filebeat  -e -c   /opt/demov1.yml  -d "publish"
+
+
+
+
+cat >  /opt/logstash.conf  << EOF
+input { 
+        redis { 
+          host => '172.16.99.2'
+          port => 6379
+          key => "redis-key"
+          data_type => "list"
+        
+   }
+}
+
+output{
+  if [type] == "keystone" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "keystone-%{+YYYY.MM.dd}"
+    }
+  }
+}
+EOF
+
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash.conf
+
+热更新 配置
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash.conf  -r 
+
+
+
+
+DELETE /keystone-2019.03.21
+
+
+
+
+head -n 2 /var/log/keystone/keystone.log   >  /opt/test.log
+[root@controller03 ~]# cat test.log 
+2019-03-21 03:35:06.962 23148 INFO keystone.common.wsgi [req-4fd9724f-0218-4ce5-b5ce-b7bc3a0d60f4 2b3e1dbc647849979bb853ba26c70b25 e5c4c4cc664e4245b28d001949bceba2 - default default] OPTIONS http://controller03:5000/
+2019-03-21 03:35:07.436 23152 INFO keystone.common.wsgi [-] OPTIONS http://controller03:35357/
+
+
+
+head -n 1 /opt/test.log |  /opt/filebeat-6.5.4-linux-x86_64/filebeat  -e -c   /opt/demov1.yml  -d "publish"
+
+{
+"@timestamp": "2019-03-21T03:15:36.272Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.5.4"
+  },
+  "prospector": {
+    "type": "stdin"
+  },
+  "input": {
+    "type": "stdin"
+  },
+  "type": "keystone",
+  "beat": {
+    "name": "controller01",
+    "hostname": "controller01",
+    "version": "6.5.4"
+  },
+  "host": {
+    "name": "controller01"
+  },
+  "offset": 0,
+  "message": "2019-03-21 03:35:06.962 23148 INFO keystone.common.wsgi [req-4fd9724f-0218-4ce5-b5ce-b7bc3a0d60f4 2b3e1dbc647849979bb853ba26c70b25 e5c4c4cc664e4245b28d001949bceba2 - default default] OPTIONS http://controller03:5000/",
+  "source": ""
+}
+
+
+filebeat  输出
+
+@timestamp": "2019-03-21T03:15:36.272Z
+"message": "2019-03-21 03:35:06.962 23148
+
+
+
+
+logstash 
+
+
+
+cat >  /opt/logstash.conf  << EOF
+input {
+        redis {
+          host => '172.16.99.2'
+          port => 6379
+          key => "redis-key"
+          data_type => "list"
+
+   }
+}
+
+output{
+  if [type] == "keystone" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "keystone-%{+YYYY.MM.dd}"
+    }
+  }
+}
+
+output {stdout {codec => rubydebug}}
+EOF
+
+
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash.conf  -r
+
+
+
+filebeat 
+
+head -n 1 /opt/test.log |  /opt/filebeat-6.5.4-linux-x86_64/filebeat  -e -c   /opt/demov1.yml  -d "publish"
+
+
+logstash 输出
+
+{
+        "offset" => 0,
+    "@timestamp" => 2019-03-21T03:38:08.243Z,
+    "prospector" => {
+        "type" => "stdin"
+    },
+          "host" => {
+        "name" => "controller01"
+    },
+      "@version" => "1",
+       "message" => "2019-03-21 03:35:06.962 23148 INFO keystone.common.wsgi [req-4fd9724f-0218-4ce5-b5ce-b7bc3a0d60f4 2b3e1dbc647849979bb853ba26c70b25 e5c4c4cc664e4245b28d001949bceba2 - default default] OPTIONS http://controller03:5000/",
+          "beat" => {
+        "hostname" => "controller01",
+         "version" => "6.5.4",
+            "name" => "controller01"
+    },
+        "source" => "",
+         "input" => {
+        "type" => "stdin"
+    },
+          "type" => "keystone"
+}
+
+
+filebeat 输出
+{
+"@timestamp": "2019-03-21T03:38:08.243Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.5.4"
+  },
+  "source": "",
+  "offset": 0,
+  "message": "2019-03-21 03:35:06.962 23148 INFO keystone.common.wsgi [req-4fd9724f-0218-4ce5-b5ce-b7bc3a0d60f4 2b3e1dbc647849979bb853ba26c70b25 e5c4c4cc664e4245b28d001949bceba2 - default default] OPTIONS http://controller03:5000/",
+  "prospector": {
+    "type": "stdin"
+  },
+  "input": {
+    "type": "stdin"
+  },
+  "type": "keystone",
+  "beat": {
+    "name": "controller01",
+    "hostname": "controller01",
+    "version": "6.5.4"
+  },
+  "host": {
+    "name": "controller01"
+  }
+}
+
+
+原始数据
+
+head -n 1 /opt/test.log 
+2019-03-21 03:35:06.962 23148 INFO keystone.common.wsgi [req-4fd9724f-0218-4ce5-b5ce-b7bc3a0d60f4 2b3e1dbc647849979bb853ba26c70b25 e5c4c4cc664e4245b28d001949bceba2 - default default] OPTIONS http://controller03:5000/
+
+
+
+kibana  
+
+March 21st 2019, 11:38:08.243
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

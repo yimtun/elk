@@ -1,0 +1,82 @@
+分词会在如下两个时机使用
+- 创建或更新文档时 Index time 会对相应的文档进行分词处理
+- 查询时 search time 会对查询语句进行分词
+
+创建 索引时分词是在配置index  mapping 的时候实现的
+title 字段 类型 test  分词器  whitespace
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc":{
+      "properties":{
+        "title":{
+          "type":"text",
+          "analyzer":"whitespace"
+        }
+      }
+    }
+  }
+}
+
+
+查询时分词两种方式
+1 查询时动态指定 analyzer
+查询message 字段 查询的语句是 hello 使用的 analyzer 是standard
+
+POST test_index/_search
+{
+  "query": {
+    "match": {
+      "message": {
+        "query": "hello",
+        "analyzer": "standard"
+      }
+    }
+  }
+}
+
+2  设置index mapping 是指定查询语句的分词方式
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "title":{
+          "type": "text",
+          "analyzer": "whitespace",
+          "search_analyzer": "standard"
+        }
+      }
+    }
+  }
+}
+
+
+ 
+
+
+
+
+
+
+
+查询时分词的指定方式有如下几种
+- 查询的时候通过analyzer指定分词器  查询时动态指定 analyzer 
+- 通过index mapping 设置search_analyzer 实现
+
+一般不需要特别指定查询时分词器
+直接使用索引时分词器即可 否则会出现无法匹配的情况
+
+分词的使用建议
+-明确字段是否需要分词 不需要分词的字段就想type 设置为keyword 可以节省空间提高性能
+-善用_analyze API 查看文档的具体分词结果
+-动手测试
+
+
+
+
+
+

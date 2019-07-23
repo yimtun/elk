@@ -1,0 +1,14 @@
+文档 Document
+用户存储在es 中的数据文档
+
+索引 Index
+由具有相同字段的文档列表组成   mysql 中的 table
+
+节点 Node
+一个elasticsearch 的运行实例 是集群的构成单元
+
+集群 Cluster
+由一个或多个节点组成 对外提供服务
+
+
+

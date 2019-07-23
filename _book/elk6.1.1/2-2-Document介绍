@@ -1,0 +1,48 @@
+document 在es 中是一个 json  object
+由字段 field 组成 常见数据类型 如下
+
+
+字符串 text 分词  keyword 不分词
+
+数值 long integer short byte double float half_float scaled_fload
+
+布尔  boolean
+
+日期  date
+
+二进制  binary
+
+范围类型 integer_range  float_range long_range double_range data_range
+
+
+
+
+每个文档有唯一的id标识  类似mysql 中的主键 
+
+-    自行指定
+- es 自动生成
+
+
+
+在es中每一个document  都会有 元数据  document metadata
+
+元数据 用于标注文档的相关信息
+
+_index   文档所在的索引名   Index  相当于table
+_type    文档所在的类型名
+_id      文档唯一id
+_uid     组合id    由_type  和 _id 组成 6.x _type 不在起作用 通_id 一样
+_source  文档的原始json 数据 可以从这里获取每个字段的内容
+_all     整合所有字段内容到该字段  默认禁用
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+lightweight data shipper
+轻量级 数据传送者
+
+filebeat 日志文件
+metricbeat 度量数据 收集操作系统 cpu  内存数据  磁盘 nginx  mysql 度量指标 需要关注 快速手机度量指标 
+存入 elasticsearch 后 可以 进行可视化展示分析 告警功能
+
+
+packetbeat  网络数据 抓包  服务器网络传输情况  
+winlogbeat   windows 数据
+
+heartbeat  健康检查 
+
+beat  处于数据的起事端  可以给 logstach  可以直接给 elasticsearch

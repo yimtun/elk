@@ -1,0 +1,66 @@
+filter{
+
+grok {
+        match => [ "message","\s*%{TIMESTAMP_ISO8601:time}\s+(?<Level>(\S+)).*"]
+     }
+
+
+}
+
+
+
+filter{
+
+grok {
+        match => [ "message","\s*%{TIMESTAMP_ISO8601:time}\s.*"]
+     }
+
+
+}
+
+filter{
+
+grok {
+        match => [ "message","%{TIMESTAMP_ISO8601:time}.*"]
+     }
+
+
+}
+
+
+
+filter {
+    grok {
+        match => {  "message" => "(?<timestamp>%{TIMESTAMP_ISO8601})"  }
+    }
+}
+
+
+
+
+
+
+
+
+filter {
+    grok {
+        match => ["message", "%{TIMESTAMP_ISO8601:logdate}"]
+    }
+    date {
+        match => ["logdate", "yyyy-MM-dd HH:mm:ss,SSS"]
+        target => "@timestamp"
+    }
+}
+
+
+
+
+
+
+
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash-6.5.4/config/   -r
+
+
+
+

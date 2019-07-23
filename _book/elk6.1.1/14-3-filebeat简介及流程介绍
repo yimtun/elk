@@ -1,0 +1,80 @@
+读取日志文件 但不做数据解析处理
+保证数据 至少被读一次 数据不会丢
+
+其他能力
+-多行处理
+-解析json格式数据
+-简单的过滤功能
+
+安装 开箱即用
+配置 filebeat.yml
+配置模板 index template
+配置 kibana dashboard
+运行
+
+filebeat 配置
+
+filebeat.prospectors:
+type:log   type 有 log stdin redis udp docker 
+paths:   数组 golang glob
+
+encoding  指定日志编码
+tags   标签
+fields   自定义字段
+fields_under_root:true  是否在根目录下的子字段
+
+output  只能有一个
+
+setup.kibana:   指定kibana 用户导入dashboard
+host:xxx
+
+
+
+index template
+
+
+setup.template.name:"nginx"
+setup.template.pattern:"nginx-*"
+setup.dashboards.index:"nginx-*"
+setup.template.fields:"nginx_fields.yml"
+setup.template.overwrite:true
+setup.template.enabled:false
+
+PUT _template/nginx
+{
+ "index_patterns":["nginx-*"]
+ ....
+}
+
+
+
+
+cd /opt/filebeat-6.1.1-linux-x86_64/
+./filebeat export config
+
+./filebeat export template
+
+
+创建template
+
+./filebeat setup --template -E 'output.elasticsearch.hosts=["localhost:9200"]
+
+建议使用ES api 来创建tempalte
+
+如果使用了 filebeat moudle 还是使用filebeat 创建template
+
+
+
+filebeat 集成kibana dashboard 可以用于快速展示
+-结合modules使用
+-一次性全部导入
+
+./filebeat setup --dashboards
+
+./fileteat -e filebeay.yml -d "publish"
+
+-e 输出到stderr 默认输出到 syslog 和 logs/filebeat
+
+-d "publish" 输出publish相关的debug日志
+
+

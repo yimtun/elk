@@ -1,0 +1,67 @@
+token filters
+- 对tokenizer输出的单词 term 进行增加 删除 修改等操作
+- 自带如下：
+lowercase  将所有term转换为小写
+stop 删除stop words
+NGram 和 Edge NGram 连词分割
+Synonym 添加近义词的 term
+
+
+POST _analyze
+{
+"text": "a Hello,world!",
+"tokenizer" : "standard",
+"filter": [
+ "stop",
+ "lowercase",
+  {
+  "type": "ngram",
+  "min_gram": 4,
+  "max_gram": 4
+}
+]
+}
+
+
+
+{
+  "tokens": [
+    {
+      "token": "hell",
+      "start_offset": 2,
+      "end_offset": 7,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "ello",
+      "start_offset": 2,
+      "end_offset": 7,
+      "type": "<ALPHANUM>",
+      "position": 1
+    },
+    {
+      "token": "worl",
+      "start_offset": 8,
+      "end_offset": 13,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "orld",
+      "start_offset": 8,
+      "end_offset": 13,
+      "type": "<ALPHANUM>",
+      "position": 2
+    }
+  ]
+}
+
+
+
+
+
+ngram  连词 自动补全
+
+
+

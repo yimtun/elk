@@ -1,0 +1,23 @@
+elasticsearch 集群对外提供restful api
+
+rest representational sata transfer 
+       表现层状态转移
+
+uri 指定资源  index  document
+http method  指明资源操作类型  get  获取 post 修改 更新  put 新建  delete  删除
+
+两种交互方式
+curl 命令行
+kibana devtools
+
+
+
+
+
+
+
+
+
+
+
+

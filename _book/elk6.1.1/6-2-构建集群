@@ -1,0 +1,60 @@
+启动一个es节点实例
+
+sudo -u elasticsearch /opt/elasticsearch-6.1.1/bin/elasticsearch -E cluster.name=my_cluster -E node.name=node1  \
+-Ehttp.host=172.16.99.2 -Ehttp.port=5200 -Epath.data=/tmp/my_cluster_node1  -v
+
+curl  172.16.99.2:5200
+{
+  "name" : "node1",
+  "cluster_name" : "my_cluster",
+  "cluster_uuid" : "fA3DAumFRS-NLxSDZ5bnBA",
+  "version" : {
+    "number" : "6.1.1",
+    "build_hash" : "bd92e7f",
+    "build_date" : "2017-12-17T20:23:25.338Z",
+    "build_snapshot" : false,
+    "lucene_version" : "7.1.0",
+    "minimum_wire_compatibility_version" : "5.6.0",
+    "minimum_index_compatibility_version" : "5.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+
+es集群相关的数据成为  cluster state 主要记录如下信息
+节点信息 比如节点名称 连接地址等
+索引信息 比如索引名称 配置等
+
+可以修改cluster state 的几点被称为master节点 一个集群只能有一个
+cluster state 存储每个节点上 master维护最新版本并同步给其他节点
+master 节点是通过集群中的所有节点选举产生的 可以被选举的节点称为master-eligible节点
+相关配置入下
+-node.master:true
+
+cerebro 里master节点标记为五角星
+
+cerebro  create index 创建一个索引
+name  test_index
+create
+
+overreview
+
+索引创建之后 信息会更新到cluster state 他有版本之分
+cluster state 0
+cluster state 1
+
+
+处理请求的节点被称为 coordinating 节点 该节点为所有节点默认角色 不能取消
+路由到正确的节点处理 比如创建索引的请求到master 节点
+
+
+存储数据的节点叫做data 节点默认都是data节点 相关配置如下 cerebro 标记符号为 方框
+node.data:true
+
+单点存在危险
+新增一个节点
+
+
+sudo -u elasticsearch /opt/elasticsearch-6.1.1/bin/elasticsearch -E cluster.name=my_cluster -E node.name=node2  \
+-Ehttp.host=172.16.99.2 -Ehttp.port=5300 -Epath.data=/tmp/my_cluster_node2  -v

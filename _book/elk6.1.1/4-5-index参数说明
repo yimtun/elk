@@ -1,0 +1,53 @@
+自定义mapping
+
+index 
+-控制当前字段是否索引 默认为true 即记录索引，false 即不可搜索
+
+在每一个字段下面有一个index 设置 
+
+DELETE my_index
+
+PUT my_index
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "cookie": {
+          "type": "text",
+          "index": false
+        }
+      }
+    }
+  }
+}
+
+
+PUT my_index/doc/1
+{
+  "cookie":"name=flfred"
+}
+
+
+
+GET my_index/_search
+{
+  "query": {
+    "match": {
+      "cookie": "name"
+    }
+  }
+}
+
+
+
+
+"reason": "Cannot search on field [cookie] since it is not indexed."
+
+
+
+index false 场景
+es中存了一些字段 这些字段是不需要被查询的  不希望这些字段被用来查询
+比如一些敏感信息 身份证号码 不希望身份证号这个字段被用来检索
+手机号  不存储倒排索引 节省空间 
+
+

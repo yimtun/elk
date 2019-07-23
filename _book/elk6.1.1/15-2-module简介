@@ -1,0 +1,23 @@
+metricbeat 有大量的module
+system
+redis
+mysql
+kafka
+zookeeper
+docker
+kubernetes
+
+每个module都有自己的metricsets 比如systemc module:
+core
+cpu
+diskio
+filesystem
+fsstat
+load
+memory
+
+
+https://www.elastic.co/guide/en/beats/metricbeat/6.1/metricbeat-modules.html
+
+
+

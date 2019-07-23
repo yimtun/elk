@@ -1,0 +1,6 @@
+解决方案 仅在可选举 master-eligible 节点数大于等于 quorum 时才可以进行master 选举
+
+-quorum = master-eligible 节点数/2+1  例如 3个master-eligible 节点时 quorum 为2
+
+-设定 discovery.zen.minimum_master_nodes = quorum  即可避免脑裂
+

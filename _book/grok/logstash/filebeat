@@ -1,0 +1,19 @@
+cat    /opt/demov1.yml 
+filebeat.prospectors:
+- type: stdin
+  fields: 
+    type: neutron-server
+  fields_under_root: true
+
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"
+
+
+
+
+/opt/filebeat-6.5.4-linux-x86_64/filebeat  -e -c   /opt/demov1.yml  -d "publish"
+
+

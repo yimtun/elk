@@ -1,0 +1,62 @@
+Management 
+
+index Patterns  定义索引 匹配信息的
+
+create index pattern
+
+index pattern 是kibaba 用来从es 里面取数据的
+不设置 index pattern kibana不知道这么去 es  取数据
+
+
+index pattern:
+heart*
+
+next
+
+如果是时间序列的数据 time filter filed name
+@timestamp
+
+custom index pattern id
+
+保存 index pattern 是会自动创建一个  index pattern id  可以自定义
+my-heartbeat
+
+
+
+index pattern  详情
+
+heart*
+time filter field name : @timestamp
+右侧三个按钮  五角星 set as  default  index   discover 里默认选择 default index
+刷新 如果索引有了新的字段 kibana 不会自动探索 需要刷新 
+
+
+fields   索引所有的字段 
+
+字段名  字段类型  字段格式 searchable  能否呗所有 (创建倒排索引的可以)   
+
+aggregatable 和doc  value 相关 启用了doc value 就可以使用 filter date  启动了  聚合分析
+
+excluded   这个字段设置mapping 的时候 可以不把这个字段的内容存在 _source 中
+controls  详情编辑
+
+
+scripted fields 
+
+source filters  只显示source  的某一些字段 在discover 就不会显示了
+
+
+save objects 
+
+dashboards 
+
+编辑 删除  
+
+
+advanced settings   修改 kibaba 相关配置
+
+dateformat:tz Browser
+
+
+
+

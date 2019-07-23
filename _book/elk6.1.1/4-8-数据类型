@@ -1,0 +1,88 @@
+数据类型
+
+-字符串  text 分词   keyword 不分词
+-数值型 long integer short byte   整型的 double float halt_float scaled_float 浮点型的
+-日期类型 date
+-布尔类型 boolean
+-二进制类型 binary
+-范围类型 inter_range float_range long_range double_range date_range 支持数值和 date
+
+复杂数据类型
+
+-数组类型  array 数组类型的表现形式和上面的简单类型没有区别 比如一个字符串的数组
+           在mapping里的它的type 其实还是string 原因在于es 倒排索引 对于数组来讲
+           其实就是倒排索引里面多了几个 term 多了一些单词而已  所以es 支持array
+           其实是天生的
+-对象类型 object  可以有自己的子字段 
+
+-嵌套类型 nested object 嵌套类型和 对象类型的区别 嵌套类型会被特殊处理 这些文档不会和
+          父文档混在一起 他们是独立存在的
+
+
+地理位置数据类型
+-geo_point        点
+-geo_shape        形状
+
+
+
+
+专用类型
+-记录ip地址ip
+-实现自动补全 completion
+-记录分词数  token_count
+-记录字符串hash 值 murmur3
+-percolator
+-join    父子查询
+
+
+
+多字段特性 multi-fields
+允许对同一个字段采用不同的配置 比如分词，常见 例子如对人名实现拼音搜索
+只需要在人名中新增一个字段为pinyin即可
+
+不会修改原始文档结构 只是在原始文档下面新增了一个子字段
+要求分词器能够从 username 转换为pinyin
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "username": {
+          "type": "text",
+          "fields": {
+            "pinyin":{
+              "type": "text",
+              "analyzer": "pinyin"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+GET test_index/_search
+{
+  "query": {
+    "match": {
+      "username.pinyin": "alex"
+    }
+  }
+}
+
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_field_datatypes
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/6.1/array.html
+
+
+
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/6.1/mapping.html

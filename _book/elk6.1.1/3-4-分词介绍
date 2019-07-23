@@ -1,0 +1,21 @@
+分词是指将文本转换成一系列单词 term or token 的过程 也可以叫文本分析
+在es里称为 Analysis 如下图所示
+
+文本 elasticsearch是最流行的搜索引擎
+
+分词结果  
+elasticsearch 流行 搜索引擎
+
+在es中负责分词的组件叫做分词器  analyzer 它的组成如下
+
+-character filters  针对原始文本进行处理 比如去除html 特殊标记
+-tokenizer   将原始文本按照一定规则切分为单词
+-token filters 针对处理的单词进行再加工 比如转小写删除或新增处理
+
+分词器调用顺序
+
+character filters
+tokenizer
+token filters
+
+

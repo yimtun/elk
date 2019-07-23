@@ -1,0 +1,37 @@
+定义数据采集        配置 prospector
+建立数据模型        index template
+建立数据处理流程    logstash/ingest pipeline
+存储并分析数据      es/kibana  dashboards
+
+filebeat 流程简化  使用modules
+
+filebeat 提供了众多开箱即用的module
+
+./filebeat modules list
+./filebeat modules enable nginx
+
+
+enabled:
+disabled:
+apache2
+acuditd
+icinga
+kafka
+logstah
+mysql
+nginx
+postgresql
+redis
+system
+traefik
+
+
+配置位于module文件夹中 如nginx module module/nginx 的相关配置如下：
+
+prospector 配置             access/config/nginx-access.yml
+index template 配置         fields.yml
+ingest pipeline 配置        access/ingest/default.json
+kibana dashboards 配置      kibana
+
+
+

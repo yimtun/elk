@@ -1,0 +1,128 @@
+logstash 设置相关文件在 conf 文件夹中 setting files
+-logstash.yml logstash 相关的配置 比如 node.name path.data
+ pipline.workers queue.type 等 这其中的配置可以被命令行中的相关参数覆盖
+
+-jvm.options 修改jvm相关参数 比如修改heap size 等
+
+
+pipeline 配置文件
+-定义数据处理流程的文件 以 .conf 结尾
+
+
+logstash.yml
+
+层级结构
+pipeline:
+  batch:
+   size:
+   delay:
+
+扁平结构
+pipeline.batch.size:
+pipeline.batch.delay:
+
+
+logstash.yml 配置项
+
+node.name
+-节点名 便于识别
+
+path.data
+-持久化存储数据的文件夹 默认是logstash 目录下的data
+
+path.config
+-设定pipeline的配置文件目录
+
+path.log
+-设定pipeline日志文件的目录
+
+pipeline.workers
+-设定pipeline的线程数 (filter+output) 优化常用项
+
+pipeline.batch.size/delay
+-设定批量处理数据的数目和延迟
+
+queue.type
+- 设定队列类型 默认是memory
+
+queue.max_bytes
+-队列总容量 默认是1G
+
+
+logstash 命令行配置项
+
+
+--node.name
+-f --path.config  pipeline 路径 可以是文件或文件夹
+--path.settings logstash配置文件夹路径 其中要包含logstash.yml
+-e --config.string 指明pipeline内容 多用于测试
+-w --pipeline.workers 
+-b --pipeline.batch.size
+--path.data
+--debug
+-t --config.test_and_exit
+
+
+
+
+logstash -e "input{stdin{}}output{stdout{codex=>line}}"  -t
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{}}output{stdout{codec=>line}}"  -t
+
+Using config.test_and_exit mode. Config Validation Result: OK. Exiting Logstash
+
+
+/opt/logstash-6.1.1/bin/logstash -e "input{stdin{}}output{stdout{codec=>line}}" --debug
+
+
+logstash 配置方式建议
+线上环境推荐采用配置文件的凡是来设定logstash 的相关配置
+这样可以减少犯错的机会 而且文件便于进行版本化管理
+
+logstash --path.settings 
+
+命令行形式多用来进行快速的配置测试 验证 检查等
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

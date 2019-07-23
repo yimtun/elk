@@ -1,0 +1,75 @@
+/bin/logstash --path.settings instance1
+/bin/logstash --path.settings instance2
+
+不同instance 中修改logstash.yml 自定义path.data 确保其不相同即可
+
+
+cp -r /opt/logstash-6.1.1/config  /opt/logstash-6.1.1/instance2
+
+
+cat > /opt/logstash-6.1.1/test.conf  << EOF
+input{
+  stdin{
+   add_field=>{"name"=>"alfredd"}
+  }
+}
+
+output{
+ stdout{
+   codec=>json_lines
+}
+}
+EOF
+
+
+
+vim  /opt/logstash-6.1.1/instance2/logstash.yml 
+node.name: test2
+path.data: /var/instance2
+path.config: /opt/logstash-6.1.1/test.conf
+
+
+
+
+
+vim /opt/logstash-6.1.1/config/logstash.yml
+path.config: /opt/logstash-6.1.1/codec.conf
+
+
+
+启动默认配置实例
+cd  /opt/logstash-6.1.1/
+./bin/logstash
+
+
+启动instance2
+/opt/logstash-6.1.1/bin/logstash --path.settings /opt/logstash-6.1.1/instance2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

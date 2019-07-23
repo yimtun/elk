@@ -1,0 +1,78 @@
+自定义mapping
+copy_to
+-将该字段的值复制到目标字段，实现类似_all 的作用 _all 老版本中将所有字段的值聚集在一起
+-不会出现在_source中 只用来搜索
+
+
+DELETE my_index
+
+
+PUT my_index
+{
+  "mappings": {
+    "doc": {
+      "properties": {
+        "first_name": {
+          "type": "text",
+          "copy_to": "full_name"
+        },
+        "last_name": {
+          "type": "text",
+          "copy_to": "full_name"
+        },
+        "full_name": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+
+
+
+新建有一个文档
+
+PUT my_index/doc/1
+{
+  "first_name":"John",
+  "last_name":"Smith"
+}
+
+
+查询
+GET my_index/_search
+{
+  "query": {
+    "match": {
+      "full_name": {
+        "query": "John Smith",
+        "operator": "and"
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

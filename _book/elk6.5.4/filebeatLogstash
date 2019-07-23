@@ -1,0 +1,252 @@
+cat  > /opt/filebeat-6.5.4-linux-x86_64/filebeat.yml << EOF
+filebeat.inputs:
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nginx/access.log
+  fields:
+    type: access
+  fields_under_root: true
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/secure
+  fields:
+    type: secure
+  fields_under_root: true
+output:
+  logstash:
+    hosts: ["172.16.99.2:5044"]
+EOF
+
+
+/opt/filebeat-6.5.4-linux-x86_64/filebeat -e -c /opt/filebeat-6.5.4-linux-x86_64/filebeat.yml
+
+
+
+
+
+
+cat  > /opt/logstash-6.5.4/config/logstash.conf  << EOF
+input {
+        beats {
+                host => '0.0.0.0'
+                port => 5044 
+        }
+}
+
+filter {
+  if [type] == "access" {
+    json {
+      source => "message"
+      remove_field => ["message","@version","path","beat","input","log","offset","prospector","source","tags"]
+    }
+  }
+}
+
+output{
+  if [type] == "access" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "access-%{+YYYY.MM.dd}"
+    }
+  }
+  else if [type] == "secure" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "secure-%{+YYYY.MM.dd}"
+    }
+  }
+}
+EOF
+
+
+/opt/logstash-6.5.4/bin/logstash -f /opt/logstash-6.5.4/config/logstash.conf
+
+
+
+
+head -n 1 /var/log/secure
+Mar 18 09:16:22 localhost sshd[13979]: Accepted password for root from 10.212.134.89 port 10324 ssh2
+
+kibana
+"message": "Mar 20 14:55:33 localhost sshd[13630]: pam_unix(sshd:session): session opened for user root by (uid=0)",
+
+
+
+
+
+head -n 1 /var/log/nginx/access.log
+172.16.99.2 - - [20/Mar/2019:14:52:10 +0800] "GET / HTTP/1.1" 200 6045 "-" "curl/7.29.0" "-"
+kibana 
+
+10.212.134.98 - - [20/Mar/2019:14:59:36 +0800] "GET /gitbook/images/favicon.ico HTTP/1.1" 200 4286 "http://172.16.99.2/" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36" "-"
+
+
+
+
+
+filebeat  redis  logstash
+
+
+cat  > /opt/filebeat-6.5.4-linux-x86_64/filebeat.yml << EOF
+filebeat.inputs:
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nginx/access.log
+  fields:
+    type: access
+  fields_under_root: true
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/secure
+  fields:
+    type: secure
+  fields_under_root: true
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"
+EOF
+
+
+/opt/filebeat-6.5.4-linux-x86_64/filebeat -e -c /opt/filebeat-6.5.4-linux-x86_64/filebeat.yml
+
+
+
+
+
+
+
+cat  > /opt/logstash-6.5.4/config/logstash.conf  << EOF
+input { 
+        redis { 
+          host => '172.16.99.2'
+          port => 6379
+          key => "redis-key"
+          data_type => "list"
+        
+   }
+}
+
+filter {
+  if [type] == "access" {
+    json {
+      source => "message"
+      remove_field => ["message","@version","path","beat","input","log","offset","prospector","source","tags"]
+    }
+  }
+}
+
+output{
+  if [type] == "access" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "access-%{+YYYY.MM.dd}"
+    }
+  }
+  else if [type] == "secure" {
+    elasticsearch {
+      hosts => ["http://172.16.99.2:9200"]
+      index => "secure-%{+YYYY.MM.dd}"
+    }
+  }
+}
+EOF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+tar xzvf redis-4.0.13.tar.gz  -C /opt/
+
+make
+
+mkdir  -p /usr/local/redis/conf /usr/local/redis/bin
+
+cp  src/redis-*  /usr/local/redis/bin/
+cp redis.conf  /usr/local/redis/conf/
+
+
+vim  /usr/local/redis/conf/redis.conf
+
+
+bind 0.0.0.1
+daemonize yes
+dir /tmp/
+
+/usr/local/redis/bin/redis-server  /usr/local/redis/conf/redis.conf
+
+netstat  -tnlp  |grep 6379
+tcp        0      0 0.0.0.1:6379            0.0.0.0:*               LISTEN      18455/redis-server  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

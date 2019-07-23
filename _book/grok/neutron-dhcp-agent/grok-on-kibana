@@ -1,0 +1,81 @@
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] 
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger}
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding}\:%{WORD:host_id}\=%{WORD:val2}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding}\:%{WORD:profile}\=%{DATA:val3}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding}\:%{WORD:profile}\=
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding}\:%{WORD:profile}\=%{DATA:val3}\,
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:True}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\,
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\,
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\,
+
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\,
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\,
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}\'\: \S*%{UUID:XXX}\'
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}\'\: \S*%{UUID:XXX}\'\, u\'%{WORD:ip_address}\'\: u\'%{IP:ip}\'\}\]\,
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}\'\: \S*%{UUID:XXX}\'\, u\'%{WORD:ip_address}\'\: u\'%{IP:ip}\'\}\]\, %{WORD:id}\=%{UUID:UUID2}\, %{WORD:mac_address}\=%{MAC:mac}\, %{WORD:name}\=%{DATA:val5}\, %{WORD:network_id}\=%{UUID:network_uuid}\, %{WORD:port_security_enabled}\=%{WORD:bool3}\, %{WORD:project_id}\=%{WORD:project_id_uuid_string}\, %{WORD:version_number}\=%{NUMBER:num}\, %{WORD:security_groups}\=
+
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req>([\S+]*)) - - - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=%{WORD:port_filter}\=%{WORD:bool2}\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}\'\: \S*%{UUID:XXX}\'\, u\'%{WORD:ip_address}\'\: u\'%{IP:ip}\'\}\]\, %{WORD:id}\=%{UUID:UUID2}\, %{WORD:mac_address}\=%{MAC:mac}\, %{WORD:name}\=%{DATA:val5}\, %{WORD:network_id}\=%{UUID:network_uuid}\, %{WORD:port_security_enabled}\=%{WORD:bool3}\, %{WORD:project_id}\=%{WORD:project_id_uuid_string}\, %{WORD:version_number}\=%{NUMBER:num}\, %{WORD:security_groups}\=\[u\'%{UUID:security_groups_uuid}\'\]\, %{WORD:status}\=%{WORD:val6}\, %{WORD:tags}\=\[%{DATA:val7}\]\, %{WORD:tenant_id}\=%{WORD:tenant_id_uuid_string}\, %{WORD:updated_at}\=(?<update_time>%{TIMESTAMP_ISO8601})
+
+
+
+
+
+(?<timestamp>%{TIMESTAMP_ISO8601}) %{WORD:number} %{WORD:info} \s*(?<api_name>([\S+]*)) \[\s*(?<req1>([\S+]*)) \s*(?<req2>([\S+]*)) \s*(?<req3>([\S+]*)) - - -\] %{WORD:Trigger} %{WORD:reload_allocations} %{WORD:for} %{WORD:port} %{WORD:admin_state_up}\=%{WORD:bool1}\, %{WORD:allowed_address_pairs}\=\[%{DATA:val1}\]\, %{WORD:binding-arg1}\:%{WORD:host_id}\=%{WORD:val2}\, %{WORD:binding-arg2}\:%{WORD:profile}\=%{DATA:val3}\, %{WORD:binding-arg3}\:%{WORD:vif_details}\=(?<myf_1>([\S+]*))\, %{WORD:binding-arg4}\:%{WORD:vif_type}\=%{WORD:bridge}\, %{WORD:binding-arg5}\:%{WORD:vnic_type}\=%{WORD:normal}\, %{WORD:created_at}\=(?<create_time>%{TIMESTAMP_ISO8601})\, %{WORD:description}\=%{DATA:val4}\, %{WORD:device_id}\=%{UUID:uuid}\, %{WORD:device_owner}\=%{DATA:device_owner_name}\, %{WORD:extra_dhcp_otps}\=\[%{DATA:opts1}\]\, %{WORD:fixed_ips}\=\[\{\S*%{WORD:subent_id}\'\: \S*%{UUID:XXX}\'\, u\'%{WORD:ip_address}\'\: u\'%{IP:ip}\'\}\]\, %{WORD:id}\=%{UUID:UUID2}\, %{WORD:mac_address}\=%{MAC:mac}\, %{WORD:name}\=%{DATA:val5}\, %{WORD:network_id}\=%{UUID:network_uuid}\, %{WORD:port_security_enabled}\=%{WORD:bool3}\, %{WORD:project_id}\=%{WORD:project_id_uuid_string}\, %{WORD:version_number}\=%{NUMBER:num}\, %{WORD:security_groups}\=\[u\'%{UUID:security_groups_uuid}\'\]\, %{WORD:status}\=%{WORD:val6}\, %{WORD:tags}\=\[%{DATA:val7}\]\, %{WORD:tenant_id}\=%{WORD:tenant_id_uuid_string}\, %{WORD:updated_at}\=(?<update_time>%{TIMESTAMP_ISO8601})

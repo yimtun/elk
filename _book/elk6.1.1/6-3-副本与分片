@@ -1,0 +1,50 @@
+提高系统可用性
+
+服务可用性：
+-2个节点情况下 允许其中1个节点停止服务
+
+数据可用向：
+-引入副本 Replication 解决
+-每个节点上都有完备的数据
+
+如何增大系统容量
+如何将数据分布于所有节点上
+-引入分片 Shard 解决问题
+分片是es支持PB级存储的基石
+-分片存储了部分数据 可以分布于任意节点上
+-分片数在索引创建时指定切后续不允许再更改，默认为5个
+-分片有主分片和副本分片之分，以实现数据高可用  也就是副本
+-副本分片的数据由主分片同步 可以有多个 从而提高读取吞吐量 副本分片数可以随时动态调整
+
+示例
+3个节点的集群中 test_index 的分片分布情况，创建时指定3个主分片和1个副本分片，一共6个分片 api 如下
+
+主分片一个节点存在一个
+副本分片一个节点存在一个
+
+
+
+sudo -u elasticsearch /opt/elasticsearch-6.1.1/bin/elasticsearch -E cluster.name=my_cluster -E node.name=node3  \
+-Ehttp.host=172.16.99.2 -Ehttp.port=5400 -Epath.data=/tmp/my_cluster_node3  -v
+
+
+
+
+cerebro 删除索引
+
+create  index
+
+name
+test_index
+number of shards   3
+number of replicas 1
+
+
+es节点磁盘空间显示关闭
+cluster settings 
+disk based shard allocation  false
+
+
+
+
+

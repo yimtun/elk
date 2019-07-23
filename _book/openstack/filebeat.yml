@@ -1,0 +1,197 @@
+filebeat.inputs:
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/keystone/keystone.log
+  fields:
+    type: keystone
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/glance/api.log
+  fields:
+    type: glance
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/cinder/api.log
+  fields:
+    type: cinder-api
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/cinder/volume.log
+  fields:
+    type: cinder-volume
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/cinder/cinder-manage.log
+  fields:
+    type: cinder-manage
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/cinder/scheduler.log
+  fields:
+    type: cinder-scheduler
+  fields_under_root: true
+
+
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/neutron/dhcp-agent.log
+  fields:
+    type: neutron-dhcp-agent
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/neutron/l3-agent.log
+  fields:
+    type: neutron-l3-agent
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/neutron/linuxbridge-agent.log
+  fields:
+    type: neutron-linuxbridge-agent
+  fields_under_root: true
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/neutron/metadata-agent.log
+  fields:
+    type: neutron-metadata-agent
+  fields_under_root: true
+
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/neutron/server.log
+  fields:
+    type: neutron-server
+  fields_under_root: true
+
+
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-api.log
+  fields:
+    type: nova-api
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-conductor.log
+  fields:
+    type: nova-conductor
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-consoleauth.log
+  fields:
+    type: nova-consoleauth
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-manage.log
+  fields:
+    type: nova-manage
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-novncproxy.log
+  fields:
+    type: nova-novncproxy
+  fields_under_root: true
+
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-placement-api.log
+  fields:
+    type: nova-placement-api
+  fields_under_root: true
+
+
+- type: log
+  tail_files: true
+  backoff: "1s"
+  paths:
+      - /var/log/nova/nova-scheduler.log
+  fields:
+    type: nova-scheduler
+  fields_under_root: true
+
+
+
+
+output:
+  redis:
+    hosts: ["172.16.99.2"]
+    port: 6379
+    key: "redis-key"
+
+
+

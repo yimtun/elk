@@ -1,0 +1,467 @@
+自定义mapping 的操作步骤如下
+
+1 写入一条文档到es的临时索引中 获取es自动生成的mapping
+2 修改步骤1 得到的mapping 自定义相关配置
+3 使用步骤2的mapping创建实际所需索引
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+
+GET test_index/_mapping
+
+复制时  去掉 开头的 
+{
+  "test_index": 
+
+
+
+末尾的 
+}
+
+
+
+
+
+
+目标 url  text   bytes  整型
+其他字段默认使用keyword
+
+
+
+
+{
+  "test_index": {
+    "mappings": {
+      "doc": {
+        "properties": {
+          "body_sent": {
+            "properties": {
+              "bytes": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "http_version": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "method": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "referrer": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "remote_ip": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "response_code": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "url": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "user_name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+修改 具体内容   子字段去掉 改为整型 long
+
+bytes删除子字段 long
+
+目标 url  text   但是不需要子字段 
+bytes  整型
+其他字段默认使用keyword
+
+
+
+byteps long
+http_version  keyword
+method keyword
+referrer  keyword
+remote_ip keyword
+response_code  keyword
+user_name   keyword
+
+
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+GET test_index/_mapping
+
+
+DELETE test_index
+
+PUT test_index
+{
+    "mappings": {
+      "doc": {
+        "properties": {
+          "body_sent": {
+            "properties": {
+              "bytes": {
+                "type": "long"
+              }
+            }
+          },
+          "http_version": {
+            "type": "keyword"
+          },
+          "method": {
+            "type": "keyword"
+          },
+          "referrer": {
+            "type": "keyword"
+          },
+          "remote_ip": {
+            "type": "keyword"
+          },
+          "response_code": {
+            "type": "keyword"
+          },
+          "url": {
+            "type": "text"
+          },
+          "user_name": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+  
+
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+
+GET test_index/_mapping
+
+
+
+
+减少修改 使用dynamic template
+
+
+"dynamic_templates": [
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ]
+
+
+
+拷贝到   doc 括号里  末尾加 逗号
+
+删除所有keyworkd 类型的设定
+
+
+
+
+
+
+
+DELETE test_index
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+GET test_index/_mapping
+
+
+DELETE test_index
+
+PUT test_index
+{
+    "mappings": {
+      "doc": {
+        "properties": {
+          "body_sent": {
+            "properties": {
+              "bytes": {
+                "type": "long"
+              }
+            }
+          },
+          "http_version": {
+            "type": "keyword"
+          },
+          "method": {
+            "type": "keyword"
+          },
+          "referrer": {
+            "type": "keyword"
+          },
+          "remote_ip": {
+            "type": "keyword"
+          },
+          "response_code": {
+            "type": "keyword"
+          },
+          "url": {
+            "type": "text"
+          },
+          "user_name": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+  
+
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+
+GET test_index/_mapping
+
+
+
+
+DELETE  test_index
+
+
+
+PUT test_index
+{
+  "mappings": {
+    "doc": {
+      "dynamic_templates": [
+        {
+          "strings_as_keywords": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "body_sent": {
+          "properties": {
+            "bytes": {
+              "type": "long"
+            }
+          }
+        },
+        "url": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+  
+  
+  
+
+
+
+
+PUT test_index/doc/1
+{
+  "referrer":"-",
+  "response_code":"200",
+  "remote_ip":"171.221.139.157",
+  "method":"POST",
+  "user_name":"-",
+  "http_version":"1.1",
+  "body_sent":{
+    "bytes":"0"
+  },
+  "url":"/analyzeVideo"
+}
+
+
+
+
+GET test_index/_mapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

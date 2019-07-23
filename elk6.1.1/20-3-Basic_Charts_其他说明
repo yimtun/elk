@@ -1,0 +1,130 @@
+[Demo]Dot size
+
+Metrics 
+
+Aggregation Count
+
+Dot Size
+
+Aggregation Average
+
+Filed bytes
+
+Custom Lable  scriptasfd
+
+Buckets
+X-Axis
+Aggregation  Date Histogram
+Filed @timestamp
+Interval Daliy
+
+Split Series
+
+Sub Aggregation Filters
+
+Filter 1 -CN
+geo.src.keyword:CN
+
+Filter 2
+geo.src.keyword:IN
+
+Filter 3
+others
+
+
+
+Advanced
+
+JSON Input
+{
+"other_bucket_key":"others"
+}
+
+
+
+
+
+Heat Map 热力图
+
+
+Metrics
+Aggregation Count
+
+数量越多 颜色越深
+
+
+
+
+Buckets 
+X-Axis
+Aggregation
+Date Histogram
+Filed @timestamp
+Interval Daily
+
+Y-Axis
+Sub Aggregation
+Terms
+Filed geo.src.keyword
+Order By  metric:Count
+Order Descending Size 5
+
+
+
+
+[Demo]24hSerialDiff
+
+Metrics
+Y-Axis Sum of bytes
+Y-Axis Serial Diff of Sum of bytes
+
+详细
+Aggregation  Serial Diff
+Metric Custom Metric
+Aggregation Sum
+Filed bytes
+
+Custom Lable 空
+
+
+Advanced
+JSON Input
+{
+"lag":24
+}
+
+
+
+
+
+Buckets
+X-Axis @timestamp per hour
+
+
+Aggregation Date Histogram
+Filed @timestamp
+Interval Hourly
+
+
+
+
+
+
+
+
+
+
+
+
+Pipe Chart
+
+Buckets
+Split Slices
+Aggregation Terms
+Filed geo.src.keyword
+Order By
+metric:Count
+
+Order Descending Size
+5
+

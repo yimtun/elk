@@ -1,0 +1,35 @@
+通过如下api可以查看集群健康状况 包括以下三种
+green 健康状态 指所有主副分片都正常分配
+yellow 指所有主分片都正常分配，但是又副本分片未正常分配
+red 有主分片未分配
+
+
+kibana dev tools
+
+
+ /opt/kibana-6.1.1-linux-x86_64/bin/kibana -e http://172.16.99.2:5300 -H 172.16.99.2 -p 5601
+GET  _cluster/health
+
+
+
+curl -XGET 172.16.99.2:5200/_cluster/health?pretty=true 
+{
+  "cluster_name" : "my_cluster",
+  "status" : "green",
+  "timed_out" : false,
+  "number_of_nodes" : 3,
+  "number_of_data_nodes" : 3,
+  "active_primary_shards" : 3,
+  "active_shards" : 6,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 0,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 100.0
+}
+
+
+

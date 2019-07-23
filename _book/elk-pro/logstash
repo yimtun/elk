@@ -1,0 +1,1 @@
+wget -P /opt  wget  https://artifacts.elastic.co/downloads/logstash/logstash-6.5.4.tar.gz

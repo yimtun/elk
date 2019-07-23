@@ -1,0 +1,44 @@
+PUT my_index
+{
+  "mappings": {
+    "doc":{
+      "properties": {
+        "title":{
+          "type": "text"
+        },
+        "name":{
+          "type": "keyword"
+        },
+        "age":{
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
+
+
+
+mapping 中的字段类型一旦设定后 禁止直接修改原因如下
+-Lucene 实现的倒排索引生成后不允许修改
+
+
+重新建立新的索引 然后做reindex 操作
+
+
+允许新增字段
+通过dynamic参数来控制字段的新增
+-true 默认 允许自动新增字段
+-false 不允许自动新增字段 但是文档可以正常写入 但是无法对这个字段进行查询操作
+-strict 文档不能写入 报错
+
+建议false   更新 mapping  reindex
+
+dynamic 可以在type 下面配置
+
+index   type 下设置   对整个index 
+object 类型 比如 social_networks 下设置
+
+nginx  cookie  dynamic 设置为false
+
+

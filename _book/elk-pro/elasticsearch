@@ -1,0 +1,23 @@
+wget -P /opt  https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.5.4.tar.gz
+
+
+systemctl  stop  elasticsearch
+systemctl  stop   kibana
+
+
+mkdir  /var/elasticsearch_data
+chown  elasticsearch:elasticsearch  -R /opt/elasticsearch-6.5.4/
+
+chown elasticsearch:elasticsearch   /var/elasticsearch_data
+
+screen -dmS elastic
+
+screen -r   elastic
+
+sudo -u elasticsearch /opt/elasticsearch-6.5.4/bin/elasticsearch -E cluster.name=lz_cluster -E node.name=node01 \
+-Ehttp.host=10.255.128.33 -Ehttp.port=9200 -Epath.data=/var/elasticsearch_data  -v
+
+
+Ctrl + a  +  d
+
+screen -list

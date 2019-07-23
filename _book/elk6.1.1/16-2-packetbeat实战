@@ -1,0 +1,46 @@
+安装
+配置 packetbeat.yml
+配置模板 index template
+配置 kibana dashboard
+运行
+
+
+cd  /opt/packetbeat-6.1.1-linux-x86_64/
+
+packetbeat.interfaces.device: eth0
+
+- type: http
+  ports: [80, 8080, 8000, 5000, 8002]
+  send_request: true
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["172.16.99.2:9200"]
+
+setup.kibana:
+  host: "172.16.99.2:5601"
+
+./packetbeat setup --dashboards
+
+./packetbeat -e -c packetbeat.yml -d "publish"
+
+GET _template/packe*
+
+GET packetbeat-6.1.1-2019.03.13/_search
+
+kinaba  discover
+
+packetbeat-*   导入 dashboard 自动创建的
+
+open serch  
+packetbeat search
+
+
+systemctl  start nginx
+curl  172.16.99.2
+
+
+Packetbeat Flows Search
+
+
+

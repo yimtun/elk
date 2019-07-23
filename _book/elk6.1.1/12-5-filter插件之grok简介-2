@@ -1,0 +1,144 @@
+自定义 grok pattern
+- pattern_defintions 参数 以键值对的方式定义pattern名称和内容
+- pattern_dir 参数 以文件的形式被读取
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter{
+    grok{
+        match=>{
+            "message"=>"%{SERVICE:service_name}"
+        }
+        pattern_definitions => {
+            "SERVICE"=>"[a-z0-9]{10,11}"
+        }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+match 匹配多种样式
+通过数组形式
+
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter{
+    grok{match=> {"message"=>["Duration: %{NUMBER:duration}","Speed:%{NUMBER:speed}"]}}
+
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+
+overwrite
+
+message 解析后依然保留 存在重复
+
+NUMBER 匹配 赋值给message
+
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter{
+    grok{
+        match=>{
+            "message"=>"%{SERVICE:service_name} %{NUMBER:message}"
+        }
+        pattern_definitions => {
+            "SERVICE"=>"[a-z0-9]{10,11}"
+        }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+
+注意输入的空格
+abc1234678 123
+
+{
+        "@version" => "1",
+         "message" => [
+        [0] "abc1234678 123",
+        [1] "123"
+    ],
+      "@timestamp" => 2019-03-15T05:41:27.098Z,
+    "service_name" => "abc1234678",
+            "host" => "10.212.134.96"
+}
+
+
+
+现在 操作message 只保留123
+
+使用overwrite  匹配出来的内容直接替换而不是追加
+
+cat > /opt/logstash-6.1.1/demo.conf <<EOF
+input{http{port=>7474}}
+filter{
+    grok{
+        match=>{
+            "message"=>"%{SERVICE:service_name} %{NUMBER:message}"
+        }
+        overwrite=>["message"]
+        pattern_definitions => {
+            "SERVICE"=>"[a-z0-9]{10,11}"
+        }
+    }
+
+mutate{
+
+    remove_field => "headers"
+}
+}
+output{stdout{codec=>rubydebug}}
+EOF
+
+
+{
+        "@version" => "1",
+         "message" => "123",
+      "@timestamp" => 2019-03-15T05:46:54.734Z,
+    "service_name" => "abc1234678",
+            "host" => "10.212.134.96"
+}
+
+
+
+
+
+tag_on_failure
+默认是 _grokparsefailure 可以基于此做判断
+
+
+
+
+正则表达式
+http://www.debuggex.com
+http:/www.regexr.com
+
+grok
+
+http://grokdebug.herokuapp.com
+http://grok.elasticsearch.cn
+x-pack grok debugger
+
+

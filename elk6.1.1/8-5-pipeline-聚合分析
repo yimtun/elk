@@ -11,15 +11,39 @@ pipeline 聚合分析
 
 es 中知道每一个订单的销售额
 
-先按月 将订单分桶
+使用 data_histogram  先按月 将订单分桶
+
 
 分桶之后做一个指标分析  一个sum  将price 做一个加和  得到每个月订单的总金额
+
+将按月计算出的金额 取得平均值 
+
+
+在聚合分析基础之上再做一个 指标分析的过程
+
+
 
 
 在使用 avg_bucket 这个pipeline聚合分析的类型  对price 的bucket  做一个平均值
 
 所有的pipeline 都会有 bucket_path 这个关键词 指点pipeline
 分析哪一个上面聚合分析的结果
+
+buckets_path "sales_per_month>sales"
+
+sales_per_month 下面的 sales
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -34,10 +58,309 @@ es 中知道每一个订单的销售额
 
 pipeline 聚合分析 分类
 
-pipeline 的分析结果会输出到原结果中 根据输出位置的不同 分为以下两类
+pipeline 的分析结果会输出到原结果中 和签名的局和分析一起输出 
 
-Parent 结果内嵌到现有的聚合分析结果 中
+根据输出位置的不同 分为以下两类:
+
+
+
+-  Parent 结果内嵌到现有的聚合分析结果 中
   
+  - Derivative      求导 导数  
+  - Moving Average  移动平均 
+  - Cumulative Sum  累计求和
+
+-  Sibling 结果与现有聚合分析结果同级
+
+  - Max/Min/Avg/Sum  Bucket
+  - Stats/Extended Stats Bucket
+  - Percentiles Bucket  
+
+
+找出所有Bucket中值最小的bucket名称和值
+
+这里的bucket是指前面聚合分析的输出 bucket
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "{salary}"
+          }
+        }
+      }
+    },
+    "min_salary_by_job":{
+      "min_bucket": {
+        "buckets_path": "jobs>avg_salary"
+      }
+      
+    }
+  }
+}
+
+
+
+
+根据job 分桶  取得每一个分桶里的 salary 平均值
+
+输出 按照job 分桶之后 每一个桶的平均工资
+
+
+pipeline  获取 平均工资最低的工作类型是什么
+
+min_salary_by_job 这个pipeline 和 局和分析  jobs同级
+
+
+
+
+
+GET test_search_index/_search
+{
+  "size": 10,
+  "aggs": {
+    "jobs": {
+      "terms": {
+        "field": "job.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "{salary}"
+          }
+        }
+      }
+    },
+    "min_salary_by_job":{
+      "stats_bucket": {
+        "buckets_path": "jobs>avg_salary"
+      }
+      
+    }
+  }
+}
+
+
+
+percentiles bucket 百分位数 统计
+
+
+
+
+
+
+
+
+
+
+
+Parent 
+
+Derivative 求导 趋势
+计算bucket值的导数 
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "birth": {
+      "date_histogram": {
+        "field": "birth",
+        "interval": "year",
+        "min_doc_count": 0
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "salary"
+          }
+        }
+      }
+    },
+    "derivative_avg_salary":{
+      "derivative": {
+        "buckets_path": "avg_salary"
+      }
+      
+    }
+  }
+}
+
+
+birth  date_histogram 做直方图的分析
+
+按照出生年月分桶  计算每个桶的 平均工资
+
+backet 直接指定 avg_salary
+
+和 avg_salary 同级 所以可以直接指定
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "birth": {
+      "date_histogram": {
+        "field": "birth",
+        "interval": "year",
+        "min_doc_count": 0
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "salary"
+          }
+        },
+        "derivative_avg_salary": {
+          "derivative": {
+            "buckets_path": "avg_salary"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+没有值就是 null
+
+
+parent 结果和pipeline 结果是平级的
+
+
+pipeline 聚合分析 Parent Moving Average 可以看到数据的变化趋势
+
+
+计算 Bucket值的移动平均值
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "birth": {
+      "date_histogram": {
+        "field": "birth",
+        "interval": "year",
+        "min_doc_count": 0
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "salary"
+          }
+        },
+        "mavg_salary": {
+          "moving_avg": {
+            "buckets_path": "avg_salary"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+Pipeline 聚合分析 Parent Cumulative Sum  累积加和
+
+计算bucket 值的累积加和
+
+
+
+GET test_search_index/_search
+{
+  "size": 0,
+  "aggs": {
+    "birth": {
+      "date_histogram": {
+        "field": "birth",
+        "interval": "year",
+        "min_doc_count": 0
+      },
+      "aggs": {
+        "avg_salary": {
+          "avg": {
+            "field": "salary"
+          }
+        },
+        "cumulative_salary": {
+          "cumulative_sum": {
+            "buckets_path": "avg_salary"
+          }
+        }
+      }
+    }
+  }
+}
+
+即便是null cumulative也是有值的
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

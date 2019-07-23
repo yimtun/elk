@@ -1,0 +1,239 @@
+Metrics   Y 轴
+Buckets   横轴
+
+
+DATA栏 配置数据项 分为两个 Metrics 和Buckets
+
+Metrics  指标数据  Y 轴
+Buckets  横坐标    X 轴
+
+
+
+Metrics ->  Aggregation
+
+分类 
+1 Metric Aggregation  指标分析
+
+2 Sibling Pipeline Aggregation
+
+3 Parent Pipeline Aggregation
+
+
+
+
+Buckets -> Aggregation   buckets相关的聚合
+
+Data Histogram
+Data Range
+Filters
+Histogram
+Range
+Significant Terms
+
+
+
+
+
+ex1  Metrics 
+Aggregation  Count
+
+Buckets
+X-Axis
+Aggregation 
+
+Date Histogram
+filed 
+@timestamp
+Interval
+Auto
+
+
+2015-03-17  2015-3-22
+
+按照日期分桶了
+
+
+查看图标真正的请求语句 ？？
+
+
+
+
+Buckets
+
+Add sub-buckets
+Split Series 
+
+-> Sub Aggregation -> Terms ->
+Filed geo.src.keyword-> 
+Order Buy
+metric:Count
+
+Order           
+Descendiing 倒排
+
+Size  5
+
+
+
+
+Filed geo.srcdest.keyword
+
+Aggregation 执行顺序的区别
+
+可以拖动 上下顺序
+
+每一个时间 前五个都是不一样的
+
+先做split  先取出总量的前五个 
+
+
+
+Split Chart 
+Rows
+
+Sub Aggregation     Terms
+Filed               geo.srcdest.keyword
+Order By            metric Count
+
+Order  Descending        Size 5
+
+
+
+按 Rows  或者按 Columns
+
+
+
+Metrics  Y 轴
+
+Aggregation 
+Count 计数
+
+Add Metrics -> Y-Axis -> Average
+Filed  bytes 平均流量大小
+
+Add  Metrics -> Y-Axis -> Sum  求和
+Filed  bytes
+
+
+
+
+
+Dot  Size
+
+Metrics & Axes   
+Metrics Count Chart Type area -> line
+
+
+
+Add Metrics -> Dot Size  
+
+
+
+
+
+
+Metrics & Axes
+
+Metrics   有几个metrics 就会显示几个
+Chart Type
+
+
+
+
+
+Pannel Settings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
