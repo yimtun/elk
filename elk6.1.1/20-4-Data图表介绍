@@ -1,0 +1,73 @@
+Gauge  帮助展示数据范围 当你知道一个数据的最大值的时候 就可以通过这个仪表盘来快速的显示当前数值的情况  
+
+网站平均响应时间 比如响应时间超过了多少 仪表盘就标红了 
+
+Metrics
+Metric
+Aggrregation
+Sum
+Filed
+bytes
+
+
+Options
+Gauge 的options就显得比较重要了 因为 需要在options制定最大范围 
+
+Ranges 
+
+From  to
+0  50000000
+50000000  100000000
+
+
+Color Options
+
+
+Gauge Type  Circle/Arc
+
+
+
+
+Goal  Options  Style  Show  Scale
+
+一般Goal 是不显示 scale的
+
+需要用到Goal 的场景 比如设定了一个目标
+希望总的用户注册数可以达到100万
+
+
+
+
+Metric    显示数值
+
+Metrics
+Metric
+Aggregation
+Sum    
+
+Filed
+bytes
+
+Options
+
+Show Labels  对勾
+
+Ranges
+From          To
+0 90000000
+90000000 900000000
+
+
+Color Schema   Green to Red
+
+
+Style
+Color  Labels
+Font Size
+
+通过设置颜色  可以在这个值在不健康的时候显示红色
+
+
+
+
+

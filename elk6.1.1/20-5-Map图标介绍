@@ -1,0 +1,113 @@
+Map 地推分为两类
+
+Coordinate Map 坐标系
+Region Map
+
+
+地理坐标系(Geographic Coordinate System GCS) 经纬度
+
+Geohash
+
+
+
+地理坐标系 GCS
+
+使用三维球面来定义地球表面位置，以实现通过经纬度对地球表面点位引用的坐标系
+
+
+
+地理坐标系 Geohash
+
+一种地址编码 它能将二维的经纬度转换成一维的字符串
+字符串编码 搜索性能更高 
+
+
+geohash.gofreerange.com
+
+上海 wtw25n
+
+
+ex  
+geohash map
+
+Metrics
+Value  
+Aggregation
+Count
+
+
+Buckets
+Geo Coordinates
+Aggregation
+Geohash
+Filed
+geo.coordinates
+对勾 Change precision on map zooom
+对勾 Place markers off grid (use geocentroid)
+对勾 Only request data ground extent of map
+
+
+
+Option Map type
+
+
+Shaded Geohash Grid
+
+
+
+Options
+Map type  Heatmap  热力图展示
+
+
+
+
+Region Map
+区域地图 
+
+Choropleth Maps 分级统计地图
+
+把区域的轮廓  用到 geo shape 类型
+
+
+
+Region Map
+
+Metrics
+value
+
+Buckets
+shape filed
+Aggregation
+Terms
+Filed
+nginx.access.geoip.country_iso_code
+
+Order By
+metric:Count
+Order Size 50 
+
+
+
+Options
+Layer Settiings
+Vector map World Countries
+Join filed Two letter abbreviation
+Display warnings 对勾
+
+Style settings
+Color Schema Yellow to Red
+
+开启配置项
+
+kibana
+
+regionmap:
+ includeElasticMapService:true
+
+
+支持自定义地图服务
+
+曲棍球球场 可以展示哪个位置击球的人比较多
+
+可以显示一个楼层里人员的分布情况 
+

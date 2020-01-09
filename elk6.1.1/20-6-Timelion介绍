@@ -1,0 +1,181 @@
+Time Series
+
+两个类型
+
+Timelion  
+Visual Builder
+
+都是的单独为时序数列创建的两个图表类型
+也是相对复杂的两个可视化分析的组件
+
+
+Timelion 
+
+基于自定义查询表达式的方式分析数据
+相关函数可以链式调用
+
+
+
+Timelion 表达式 定义数据来源
+Elasticsearch
+ - .es(index=metricbeat-*)
+
+World Bank  数据源支持世界银行  中国GDP
+ - .wbi(country=CN,indicator=NY.GDP.MKTP.CD)
+ -  注意时间扩大选择大于1年,比如最近50年
+
+Quandl
+
+Graphite
+
+
+数据源 .es()
+
+index 指明查询的索引
+q     指明查询条件
+metric 指明展示指标 默认是个数
+split 按照某字段分组数据
+offset 设定时间偏移值 比如 -1d 将昨天的数据展示到当前值
+
+.es(index=logstash-*,q=geo.src.keyword:CN,metric=sum:bytes,split=machine.os.keyword:3,offset=-1d)
+
+
+
+
+比较今天和昨天的流量情况
+
+
+.es(index=logstash-*,q=geo.src.keyword:CN,metric=sum:bytes,offset=-1d).label(yesterday),.es(index=logstash-*,q=geo.src.keyword:CN,metric=sum:bytes).label(tody)
+
+
+
+展示相关函数
+.title 设定该图标的名称
+.label 设定该组数据的图例名称
+
+数据展现样式
+
+.lines 线图 .points 点图 .bars   柱状图
+
+颜色设置
+
+.color
+
+.legend 设定图例的展示样式和位置
+
+.yaxis 设定y轴个数和样式
+
+
+.es().label('cpu').points().color(red).legend(column=2).yaxis(2).title('cpu info')
+
+
+计算相关函数
+
+对.es()查询出的数据进行统一的运算处理
+
+- abs 绝对值
+
+- log 对数
+
+- cusum 累加
+
+- derivative 求导
+
+- mvavg 移动平均
+
+- trend  趋势值
+
+.es()abs().cusum()
+
+范围控制相关的函数
+
+range 控制坐标范围，方便比较不同计量单位的数据
+
+yaxis(2)  添加新坐标
+
+scaled_interval 修改计算间隔到指定的单位 方便比较
+
+
+(.es(),.es(metric=sum:bytes)).range(0,1000)
+
+.es(),es(metric=sum:bytes).yaxis(2)
+
+.es(metric=sum:bytes).scaled_ingterval(1s)
+
+
+系列数据运算相关函数
+
+add/plus  相加
+
+substract 相减
+
+multiply  相乘
+
+divide    相除
+
+.es(CN).divide(.es()).multiply(100)
+
+中国流量的百分比
+
+
+条件判断相关函数
+
+min/max 对数据进行截断处理
+
+if 条件判断
+
+.es().bars(stack=false).color(#F44336),.min(.es(),200).bars(stack=false).color(#8BC34A)
+
+小于200 显示颜色设置  实现告警的效果
+
+
+.es(),.es().if(lt,500,0,800).points()
+
+如果小于500 设置成0 否则设置成800
+
+
+
+.es(index=logstash-*,q=geo.src.keyword:CN,metric=sum:bytes,offset=-1d).label(yesterday),.es(index=logstash-*,q=geo.src.keyword:CN,metric=sum:bytes).label(tody)
+
+
+ex1
+
+.es(q='geo.src.keyword:CN',index=logstash-*).label('CN'),.es(q="geo.src.keyword:US",index=logstash-*).label('US').title('request count of CN and US')
+
+
+ex2 label 支持正则匹配 split  对src keyword 取了前5个 metric bytes 的加和 
+
+.es(split=geo.src.keyword:5,metric=sum:bytes,index=logstash*).label(label="$1",regex=".*geo.src.keyword\:(\w+)>.*").title("split example")
+
+
+
+
+ex3
+.es(split=geo.src.keyword:1,split=machine.os.keyword:2,index=logstash*,metric=count,metric=sum:bytes).label(label="$1-$2-$3",regex="geo.src.keyword:([^>]+)>machine.os.keyword:([^>]+)>(.*)").static(50000).label("alerting line").color("red").title("multi split and metrics")
+
+
+
+
+
+
+
+
+
+
+
+timelion documetation
+
+
+
+
+
+文档
+
+https://www.elastic.co/guide/en/kibana/6.5/timelion.html#timelion
+
+
+https://www.elastic.co/guide/en/kibana/6.5/timelion-getting-started.html
+
+
+
+https://www.elastic.co/guide/en/kibana/6.5/timelion-create.html
